@@ -1,4 +1,6 @@
 import { createStore } from 'vuex'
+import ws from "./ws";
+import statecenter from "./statecenter";
 
 export default createStore({
   state: {
@@ -7,6 +9,7 @@ export default createStore({
   },
   actions: {
   },
-  modules: {
+  modules: { 
+    ws, statecenter
   }
 })
