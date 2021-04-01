@@ -29,7 +29,7 @@
   >
     <div class="p-grid">
       <div class="p-field p-col-12">
-        <label for="nickname">暱稱 - 日後可變更</label>
+        <label class="input-hander" for="nickname">暱稱 - 日後可變更</label>
         <InputText
           class="textbox"
           id="nickname"
@@ -44,7 +44,7 @@
         </span>
       </div>
       <div class="p-field p-col-12">
-        <label for="email">信箱 - 將設定為登入帳號</label>
+        <label class="input-hander" for="email">信箱 - 將設定為登入帳號</label>
         <InputText
           class="textbox"
           id="email"
@@ -57,7 +57,7 @@
         <span id="email-help" class="p-error err-hander">{{ err.email }}</span>
       </div>
       <div class="p-field p-col-12">
-        <label for="password">密碼</label>
+        <label class="input-hander" for="password">密碼</label>
         <Password
           class="textbox"
           id="password"
@@ -71,7 +71,7 @@
         }}</span>
       </div>
       <div class="p-field p-col-12">
-        <label for="passwordcheck">確認密碼</label>
+        <label class="input-hander" for="passwordcheck">確認密碼</label>
         <Password
           class="textbox"
           :feedback="false"
@@ -93,7 +93,7 @@
         @click="closeModalSignin"
         class="p-button-text"
       />
-      <Button label="確認" icon="pi pi-check" @click="finalcheck" />
+      <Button label="確認" icon="pi pi-check" @click="signinbycheck" />
     </template>
   </Dialog>
 
@@ -107,7 +107,9 @@
   >
     <div class="p-grid">
       <div class="p-field p-col-12">
-        <label for="usernamelogin">帳號(您的電子信箱)</label>
+        <label class="input-hander" for="usernamelogin"
+          >帳號(您的電子信箱)</label
+        >
         <div class="textbox">
           <InputText
             id="usernamelogin"
@@ -116,6 +118,9 @@
             autofocus
             style="width: 100%"
             v-model.trim="usernamelogin"
+            @focus="
+              (this.err.usernamelogin = ''), (this.err.passwordlogin = '')
+            "
           />
           <span id="usernamelogin-help" class="p-error err-hander">{{
             err.usernamelogin
@@ -123,7 +128,7 @@
         </div>
       </div>
       <div class="p-field p-col-12">
-        <label for="passwordlogin">密碼</label>
+        <label class="input-hander" for="passwordlogin">密碼</label>
         <div class="textbox">
           <InputText
             id="passwordlogin"
@@ -131,6 +136,9 @@
             aria-describedby="passwordlogin-help"
             style="width: 100%"
             v-model.trim="passwordlogin"
+            @focus="
+              (this.err.usernamelogin = ''), (this.err.passwordlogin = '')
+            "
           />
           <span id="passwordlogin-help" class="p-error err-hander">{{
             err.passwordlogin
@@ -145,7 +153,7 @@
         @click="closeModalLogin"
         class="p-button-text"
       />
-      <Button label="確認" icon="pi pi-check" @click="dologin" />
+      <Button label="確認" icon="pi pi-check" @click="loginbycheck" />
     </template>
   </Dialog>
 </template>
@@ -155,6 +163,7 @@ import Dialog from "primevue/dialog";
 import Password from "primevue/password";
 import InputText from "primevue/inputtext";
 import { validateEmail } from "../utils/tools.js";
+import { endpoint } from "../utils/endpoint.js";
 import axios from "axios";
 
 export default {
@@ -182,10 +191,10 @@ export default {
   computed: {
     dispalyLogin: {
       get() {
-        return this.$store.state.statecenter.login;
+        return this.$store.state.statecenter.loginbox;
       },
       set(val) {
-        this.$store.commit("statecenter/setLogin", val);
+        this.$store.commit("statecenter/setLoginBox", val);
       },
     },
   },
@@ -210,16 +219,16 @@ export default {
       this.err.passwordconfirm = "";
     },
     openModalLogin() {
-      this.$store.commit("statecenter/setLogin", true);
+      this.$store.commit("statecenter/setLoginBox", true);
     },
     closeModalLogin() {
-      this.$store.commit("statecenter/setLogin", false);
+      this.$store.commit("statecenter/setLoginBox", false);
       this.usernamelogin = "";
       this.passwordlogin = "";
       this.err.usernamelogin = "";
       this.err.passwordlogin = "";
     },
-    async finalcheck() {
+    async signinbycheck() {
       let count = 0;
       const verifiedemail = validateEmail(this.email);
 
@@ -251,7 +260,8 @@ export default {
     },
     async emailChecker() {
       const { data } = await axios.get(
-        "http://localhost:8082/chat/rest/v1/userAPI/getUserByEmailForCheck?email=" +
+        endpoint +
+          "chat/rest/v1/userAPI/getUserByEmailForCheck?email=" +
           this.email
       );
 
@@ -263,7 +273,6 @@ export default {
         }
       } else {
         this.err.email = "信箱已被使用";
-        console.log(data);
       }
     },
     doSignin() {
@@ -279,7 +288,7 @@ export default {
       };
       axios
         .post(
-          "http://localhost:8082/chat/rest/v1/userAPI/doSignIn",
+          endpoint + "chat/rest/v1/userAPI/doSignIn",
           JSON.stringify(params),
           {
             headers: headers,
@@ -287,12 +296,51 @@ export default {
         )
         .then((res) => console.log(res.data));
     },
-    dologin() {
+    loginbycheck() {
+      let count = 0;
+
       if (this.usernamelogin === "") {
         this.err.usernamelogin = "請輸入註冊信箱";
+        count++;
       }
       if (this.passwordlogin === "") {
         this.err.passwordlogin = "請輸入密碼";
+        count++;
+      }
+      if (count == 0) {
+        this.doLogin();
+      }
+    },
+    async doLogin() {
+      let params = {
+        email: this.usernamelogin,
+        password: this.passwordlogin,
+      };
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: "",
+        "Access-Control-Allow-Origin": "*",
+      };
+      const { data } = await axios.post(
+        endpoint + "chat/rest/v1/authAPI/auth",
+        JSON.stringify(params),
+        {
+          headers: headers,
+        }
+      );
+
+      if (data.status == 200) {
+        console.log("登入成功");
+        localStorage.setItem("token", data.token);
+        this.closeModalLogin();
+        this.$store.commit("statecenter/setToken", data.token);
+
+      } else if (data.status == 401) {
+        (this.passwordlogin = ""),
+          (this.err.passwordlogin = "無此帳號或密碼錯誤");
+        console.log("帳號密碼錯誤");
+      } else {
+        console.log(data);
       }
     },
   },
@@ -336,6 +384,9 @@ export default {
   height: 16px;
   width: 100%;
   // visibility: hidden;
+}
+.input-hander {
+  float: left;
 }
 #nav {
   padding: 30px;

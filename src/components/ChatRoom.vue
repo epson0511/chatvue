@@ -1,11 +1,19 @@
 <template>
   <div class="outer-container p-grid">
-    <div class="p-col-12 text-head"><h3>ChatRoomPage 線上人數{{ totalcount }}</h3></div>
+    <div class="p-col-12 text-head">
+      <h3>ChatRoomPage 線上人數{{ totalcount }}</h3>
+    </div>
     <div class="p-col-12">
       <div class="p-d-flex p-flex-column p-jc-end">
         <div class="text-body">
-          <div class="p-col-12 dialog" v-for="item in messageSended" :key="item">
-            <div v-if="item.greeting == null || item.greeting == false">{{ item.username }}：{{ item.msg }}</div>
+          <div
+            class="p-col-12 dialog"
+            v-for="item in messageSended"
+            :key="item"
+          >
+            <div v-if="item.greeting == null || item.greeting == false">
+              {{ item.username }}：{{ item.msg }}
+            </div>
             <div v-else>[{{ item.username }}]{{ item.msg }}</div>
           </div>
         </div>
@@ -48,7 +56,7 @@
           ref="input"
           type="text"
           v-show="!isanonymous"
-          v-model.trim="username"
+          v-model.trim="usernameSet"
           placeholder="set your name..."
           @keyup.enter="anonymous_set_name"
         />
@@ -77,6 +85,8 @@ import Button from "primevue/button";
 import { connectSocket, sendText } from "../utils/api";
 import { uuid } from "../utils/tools.js";
 import { useStore } from "vuex";
+import { endpoint } from "../utils/endpoint.js";
+import axios from "axios";
 
 export default {
   name: "chat-room",
@@ -84,15 +94,15 @@ export default {
     return {
       isdisable: true,
       userid: "anonymous",
-      username: "",
+      usernameSet: "",
       message: "",
       messageSend: [],
       greeting: false,
     };
   },
-  watch:{
-    rank: function (){
-      console.log('rank changed')
+  watch: {
+    rank: function () {
+      console.log("rank changed");
     }
   },
   computed: {
@@ -102,20 +112,22 @@ export default {
     isanonymous: function () {
       return this.userid === "xxx_typing_the_user_xxx" ? false : true;
     },
-    rank () {
+    rank() {
       return this.$store.state.ws.rank;
     },
-    messageSended (){
+    messageSended() {
       return this.$store.state.ws.messageCollection;
     },
-    totalcount () {
+    totalcount() {
       return this.$store.state.ws.totalcount;
+    },
+    username() {
+      return this.$store.state.ws.username;
     }
   },
   methods: {
     send: function () {
       if (this.message != "") {
-
         let params = {
           userKey: this.$store.state.ws.userKey,
           username: this.username,
@@ -123,8 +135,8 @@ export default {
         };
 
         this.messageSend.push(params);
-       sendText(JSON.stringify(params));
-        console.log(this.$store.state.ws.messageCollection)
+        sendText(JSON.stringify(params));
+        console.log(this.$store.state.ws.messageCollection);
         // this.$store.commit("ws/setMessageCollection", params);
       }
       this.message = "";
@@ -136,8 +148,14 @@ export default {
       });
     },
     checkUser: function () {
-      if (this.rank === 0) {
+      if (this.$store.state.statecenter.token === null) {
         console.log("anonymous_這邊是未登入的意思");
+      } else {
+        console.log(
+          "使用者曾登入。token:" + this.$store.state.statecenter.token
+        );
+        // token驗證成功時設定使用者 失敗時刪除token
+        this.setUserByToken();
       }
     },
     anonymous_set_name_typing: function () {
@@ -152,17 +170,18 @@ export default {
     anonymous_set_name: function () {
       //  const store = useStore();
       console.log(this.$store.state.ws.username);
-      if (this.username !== "") {
+      if (this.usernameSet !== "") {
+        this.$store.commit("ws/setUsername", '(訪客)' + this.usernameSet);
         let params = {
           // userid: 0,
-          username: this.username,
+          username: '(訪客)' + this.usernameSet,
           avatar: "anonymous",
           greeting: true,
         };
 
         const createUuid = uuid();
         this.$store.commit("ws/setUserkey", createUuid);
-        console.log(this.$store.state.ws.userid);
+        console.log(this.$store.state.ws.userKey);
         this.$store.commit("ws/setUuidList", createUuid);
 
         console.log(this.$store.state.ws.uuidList);
@@ -173,7 +192,42 @@ export default {
       }
     },
     openModalLogin() {
-      this.$store.commit("statecenter/setLogin", true);
+      this.$store.commit("statecenter/setLoginBox", true);
+    },
+    async setUserByToken() {
+      try {
+        let params = {
+          email: this.usernamelogin,
+          password: this.passwordlogin,
+        };
+        const headers = {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + this.$store.state.statecenter.token,
+          "Access-Control-Allow-Origin": "*",
+        };
+        const { data } = await axios.post(
+          endpoint + "chat/rest/v1/authAPI/authenticate",
+          JSON.stringify(params),
+          {
+            headers: headers,
+          }
+        );
+        console.log(data);
+        let userinfo = {
+          username: data.name,
+          userid: data.id,
+          greeting: true,
+          token: true,
+        };
+
+        this.$store.commit("ws/setUserkey", data.id);
+        this.$store.commit("ws/setUsername", data.name);
+        connectSocket(JSON.stringify(userinfo));
+      } catch (error) {
+        console.log(error.message);
+        this.$store.commit("statecenter/setToken", null);
+        localStorage.removeItem("token");
+      }
     },
   },
   components: {

@@ -1,11 +1,15 @@
 export const state = {
-    login: false,
+    loginbox: false,
+    token: localStorage.getItem("token"),
   };
   export const actions = {};
   
   export const mutations = {
-    setLogin(state, payload) {
-      state.login = payload;
+    setLoginBox(state, payload) {
+      state.loginbox = payload;
+    },
+    setToken(state, payload) {
+      state.token = payload;
     },
   };
   export const getters = {};

@@ -1,7 +1,7 @@
 export const state = {
     wsRes: {},
     userKey: '00000',
-    username: '預設名稱',
+    username: '',
     uuidList: [],
     rank: 0,
     totalcount: 0,
