@@ -1,10 +1,16 @@
 <template>
   <div>This is Header block</div>
   <div id="nav">
-    <router-link to="/">Home</router-link> |
+    <router-link to="/Chatroom">Chatroom</router-link> |
     <router-link to="/about">About</router-link>
-
-    <div class="btn-head">
+    <div class="btn-head" v-if="token != null">
+      <Button class="p-button-warning userbtn" type="button" @click="toggle"
+        ><i class="pi pi-user" style="margin-right: 10px"></i
+        >{{ username }}</Button
+      >
+      <Menu class="usermenu" ref="menu" :model="items" :popup="true" />
+    </div>
+    <div class="btn-head" v-else>
       <Button
         label="Secondary"
         class="p-button-raised p-button-secondary"
@@ -162,9 +168,11 @@ import Button from "primevue/button";
 import Dialog from "primevue/dialog";
 import Password from "primevue/password";
 import InputText from "primevue/inputtext";
+import Menu from "primevue/menu";
 import { validateEmail } from "../utils/tools.js";
 import { endpoint } from "../utils/endpoint.js";
 import axios from "axios";
+import { forceColse } from "../utils/api";
 
 export default {
   name: "app-head",
@@ -186,6 +194,44 @@ export default {
         usernamelogin: "",
         passwordlogin: "",
       },
+      items: [
+        // {
+        //   label: "Update",
+        //   icon: "pi pi-refresh",
+        //   command: () => {
+        //     this.$toast.add({
+        //       severity: "success",
+        //       summary: "Updated",
+        //       detail: "Data Updated",
+        //       life: 3000,
+        //     });
+        //   },
+        // },
+        // {
+        //   label: "Delete",
+        //   icon: "pi pi-times",
+        //   command: () => {
+        //     this.$toast.add({
+        //       severity: "warn",
+        //       summary: "Delete",
+        //       detail: "Data Deleted",
+        //       life: 3000,
+        //     });
+        //   },
+        // },
+        // {
+        //   label: "Vue Website",
+        //   icon: "pi pi-external-link",
+        //   url: "https://vuejs.org/",
+        // },
+        {
+          label: "登出",
+          icon: "pi pi-sign-out",
+          command: () => {
+            this.doLogout();
+          },
+        },
+      ],
     };
   },
   computed: {
@@ -196,6 +242,17 @@ export default {
       set(val) {
         this.$store.commit("statecenter/setLoginBox", val);
       },
+    },
+    token() {
+      return this.$store.state.statecenter.token;
+    },
+    username() {
+      let user = this.$store.state.ws.username;
+      if (!user) return "";
+      if (user.length > 4) {
+        return user.slice(0, 4) + "...";
+      }
+      return user;
     },
   },
   // watch: {
@@ -332,9 +389,10 @@ export default {
       if (data.status == 200) {
         console.log("登入成功");
         localStorage.setItem("token", data.token);
+        forceColse();
         this.closeModalLogin();
         this.$store.commit("statecenter/setToken", data.token);
-
+        this.setUserByToken();
       } else if (data.status == 401) {
         (this.passwordlogin = ""),
           (this.err.passwordlogin = "無此帳號或密碼錯誤");
@@ -343,6 +401,56 @@ export default {
         console.log(data);
       }
     },
+    checkUser: function () {
+      if (this.$store.state.statecenter.token === null) {
+        console.log("token not exist");
+      } else {
+        console.log("token exist, verifying...");
+        this.setUserByToken();
+      }
+    },
+    async setUserByToken() {
+      try {
+        let params = {
+          email: this.usernamelogin,
+          password: this.passwordlogin,
+        };
+        const headers = {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + this.$store.state.statecenter.token,
+          "Access-Control-Allow-Origin": "*",
+        };
+        const { data } = await axios.post(
+          endpoint + "chat/rest/v1/authAPI/authenticate",
+          JSON.stringify(params),
+          {
+            headers: headers,
+          }
+        );
+        console.log(data);
+        this.$store.commit("ws/setUserkey", data.id);
+        this.$store.commit("ws/setUsername", data.name);
+        this.$store.commit("ws/setRank", data.level);
+      } catch (error) {
+        console.log(error.message);
+        this.$store.commit("statecenter/setToken", null);
+        localStorage.removeItem("token");
+      }
+    },
+    doLogout() {
+      forceColse();
+      this.$store.commit("ws/setUserkey", "00000");
+      this.$store.commit("ws/setUsername", "");
+      this.$store.commit("statecenter/setToken", null);
+      this.$store.commit("ws/setRank", 0);
+      localStorage.removeItem("token");
+    },
+    toggle(event) {
+      this.$refs.menu.toggle(event);
+    },
+  },
+  mounted() {
+    this.checkUser();
   },
 
   components: {
@@ -350,6 +458,7 @@ export default {
     Dialog,
     InputText,
     Password,
+    Menu,
   },
 };
 </script>
@@ -387,6 +496,11 @@ export default {
 }
 .input-hander {
   float: left;
+}
+.usermenu,
+.userbtn {
+  width: 9rem !important;
+  display: inline-block !important;
 }
 #nav {
   padding: 30px;

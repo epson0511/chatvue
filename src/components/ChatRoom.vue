@@ -1,7 +1,9 @@
 <template>
   <div class="outer-container p-grid">
+    <span class="p-col-11 p-grid p-jc-end">線上人數：{{ totalcount }}</span>
     <div class="p-col-12 text-head">
-      <h3>ChatRoomPage 線上人數{{ totalcount }}</h3>
+      <TabMenu class="p-col-12 roommenutab" :model="items"></TabMenu>
+      <!-- <router-view /> -->
     </div>
     <div class="p-col-12">
       <div class="p-d-flex p-flex-column p-jc-end">
@@ -38,7 +40,7 @@
       <div v-else-if="rank === 0" class="p-col-12 input-body">
         <Button
           label="Info"
-          class="p-button-info p-col-2 p-md-1 p-lg-1 btn-send"
+          class="p-button-info btn-send"
           v-show="isanonymous"
           @click="anonymous_set_name_typing"
           >訪客</Button
@@ -71,7 +73,7 @@
         <Button
           label="Primary"
           v-show="isanonymous"
-          class="p-button-primary p-col-2 p-md-1 p-lg-1 btn-send"
+          class="p-button-primary btn-send"
           @click="openModalLogin"
           >登入</Button
         >
@@ -82,11 +84,12 @@
 <script>
 import InputText from "primevue/inputtext";
 import Button from "primevue/button";
+import TabMenu from "primevue/tabmenu";
 import { connectSocket, sendText } from "../utils/api";
 import { uuid } from "../utils/tools.js";
-import { useStore } from "vuex";
-import { endpoint } from "../utils/endpoint.js";
-import axios from "axios";
+
+// import { endpoint } from "../utils/endpoint.js";
+// import axios from "axios";
 
 export default {
   name: "chat-room",
@@ -98,12 +101,33 @@ export default {
       message: "",
       messageSend: [],
       greeting: false,
+      items: [
+        {
+          label: "聊天室",
+          icon: "pi pi-fw pi-th-large",
+          command: (e) => {
+            // event.originalEvent: Browser event
+            // event.item: Menuitem instance
+          },
+        },
+        {
+          label: "線上列表",
+          icon: "pi pi-fw pi-users",
+          command: (e) => {
+            // event.originalEvent: Browser event
+            // event.item: Menuitem instance
+          },
+        },
+      ],
     };
   },
   watch: {
     rank: function () {
       console.log("rank changed");
-    }
+      if (this.rank > 1) {
+        this.openWsByToken();
+      }
+    },
   },
   computed: {
     isTexted: function () {
@@ -123,7 +147,7 @@ export default {
     },
     username() {
       return this.$store.state.ws.username;
-    }
+    },
   },
   methods: {
     send: function () {
@@ -149,13 +173,12 @@ export default {
     },
     checkUser: function () {
       if (this.$store.state.statecenter.token === null) {
-        console.log("anonymous_這邊是未登入的意思");
+        console.log("token not exist");
       } else {
-        console.log(
-          "使用者曾登入。token:" + this.$store.state.statecenter.token
-        );
+        console.log("token exist, verifying...");
+
         // token驗證成功時設定使用者 失敗時刪除token
-        this.setUserByToken();
+        this.openWsByToken();
       }
     },
     anonymous_set_name_typing: function () {
@@ -171,10 +194,10 @@ export default {
       //  const store = useStore();
       console.log(this.$store.state.ws.username);
       if (this.usernameSet !== "") {
-        this.$store.commit("ws/setUsername", '(訪客)' + this.usernameSet);
+        this.$store.commit("ws/setUsername", "(訪客)" + this.usernameSet);
         let params = {
           // userid: 0,
-          username: '(訪客)' + this.usernameSet,
+          username: "(訪客)" + this.usernameSet,
           avatar: "anonymous",
           greeting: true,
         };
@@ -194,34 +217,15 @@ export default {
     openModalLogin() {
       this.$store.commit("statecenter/setLoginBox", true);
     },
-    async setUserByToken() {
+    openWsByToken() {
       try {
-        let params = {
-          email: this.usernamelogin,
-          password: this.passwordlogin,
-        };
-        const headers = {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + this.$store.state.statecenter.token,
-          "Access-Control-Allow-Origin": "*",
-        };
-        const { data } = await axios.post(
-          endpoint + "chat/rest/v1/authAPI/authenticate",
-          JSON.stringify(params),
-          {
-            headers: headers,
-          }
-        );
-        console.log(data);
         let userinfo = {
-          username: data.name,
-          userid: data.id,
+          username: this.$store.state.ws.username,
+          userid: this.$store.state.ws.userKey,
           greeting: true,
           token: true,
         };
-
-        this.$store.commit("ws/setUserkey", data.id);
-        this.$store.commit("ws/setUsername", data.name);
+        console.log("userinfo:" + JSON.stringify(userinfo));
         connectSocket(JSON.stringify(userinfo));
       } catch (error) {
         console.log(error.message);
@@ -233,17 +237,11 @@ export default {
   components: {
     InputText,
     Button,
+    TabMenu,
   },
-  setup() {
-    const store = useStore();
-    console.log(store.state.ws.userKey);
-    console.log(store.state.ws.username);
-
-    // connectSocket();
-    // return {};
-  },
+  setup() {},
   mounted() {
-    this.checkUser();
+    // this.checkUser();
   },
   updated() {
     this.focusInput();
@@ -291,10 +289,9 @@ export default {
 }
 .text-head {
   position: absolute;
-  left: 0;
   /* height: 100%; */
   top: 60px;
-  padding: 0;
+  padding-left: 0 !important;
 }
 .dialog {
   border: 1px solid #73ad21;
@@ -305,5 +302,8 @@ export default {
   justify-content: center;
   color: #ffffff !important;
   font-weight: bold !important;
+}
+.roommenutab {
+  display: flex;
 }
 </style>

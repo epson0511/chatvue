@@ -6,14 +6,14 @@ const wsUrl = wsendpoint + "chat/groupChat/10000/";
 let socket = null;
 
 export const connectSocket = (userinfo) => {
-//   console.log(store.state.ws.uuidList.lastIndexOf(store.state.ws.userid));
+  //   console.log(store.state.ws.uuidList.lastIndexOf(store.state.ws.userid));
   // const useridbyindex = store.state.ws.uuidList.lastIndexOf(store.state.ws.userid);
 
   socket = new WebSocket(wsUrl + store.state.ws.userKey);
 
   socket.onopen = function() {
     console.log("websocket connected!!");
-    console.log(userinfo);
+    console.log("uus:" + userinfo);
     socket.send(userinfo);
   };
 
@@ -43,4 +43,10 @@ export const connectSocket = (userinfo) => {
 export function sendText(msg) {
   console.log(msg);
   socket.send(msg);
+}
+
+export function forceColse() {
+  if (socket != null) {
+    socket.close();
+  }
 }

@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="chatroom">
     <!-- <img alt="Vue logo" src="../assets/logo.png"> -->
     <ChatRoom :key="componentKey"></ChatRoom>
   </div>
@@ -11,7 +11,7 @@
 import ChatRoom from "@/components/ChatRoom.vue";
 
 export default {
-  name: "Home",
+  name: "chatroom",
   data() {
     return {
       componentKey: 0,
@@ -21,11 +21,17 @@ export default {
     token: function () {
        console.log("token now is" + this.token);
         this.forceRerender();
-    }
+    },
+    '$store.state.ws.rank':function (){
+      this.forceRerender();
+    },
   },
   computed: {
     token() {
       return this.$store.state.statecenter.token;
+    },
+        rank() {
+      return this.$store.state.ws.rank;
     },
   },
   components: {
@@ -39,7 +45,7 @@ export default {
 };
 </script>
 <style>
-.home {
+.chatroom {
   position: absolute;
   left: 0;
   bottom: 0;
