@@ -58,5 +58,6 @@
       "vue-cli-service lint",
       "git add"
     ]
-  }
+  },
+  "proxy":"http://127.0.0.1:8081"
 }

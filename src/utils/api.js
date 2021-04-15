@@ -12,22 +12,19 @@ export const connectSocket = (userinfo) => {
   socket = new WebSocket(wsUrl + store.state.ws.userKey);
 
   socket.onopen = function() {
-    console.log("websocket connected!!");
-    console.log("uus:" + userinfo);
     socket.send(userinfo);
   };
 
   socket.onmessage = function(e) {
-    console.log("onmessage", e);
+
     let resData = JSON.parse(e.data);
-    if (resData.rank) {
+    if (resData.rank && store.state.ws.userKey === resData.userId) {
       store.commit("ws/setRank", resData.rank);
     }
     if (resData.count) {
       store.commit("ws/setTotalCount", resData.count);
     }
-    console.log(store.state.ws.rank);
-    console.log(resData.username + resData.msg);
+
     store.commit("ws/setMessageCollection", resData);
   };
 
@@ -41,7 +38,7 @@ export const connectSocket = (userinfo) => {
 };
 
 export function sendText(msg) {
-  console.log(msg);
+  console.log('api-sendText:' + msg);
   socket.send(msg);
 }
 

@@ -1,28 +1,54 @@
 <template>
   <div class="outer-container p-grid">
-    <span class="p-col-11 p-grid p-jc-end">線上人數：{{ totalcount }}</span>
     <div class="p-col-12 text-head">
+      <div class="p-col-11 p-grid p-jc-end onlinecount">
+        線上人數：{{ totalcount }}
+      </div>
       <TabMenu class="p-col-12 roommenutab" :model="items"></TabMenu>
       <!-- <router-view /> -->
     </div>
     <div class="p-col-12">
       <div class="p-d-flex p-flex-column p-jc-end">
-        <div class="text-body">
-          <div
-            class="p-col-12 dialog"
-            v-for="item in messageSended"
-            :key="item"
-          >
-            <div v-if="item.greeting == null || item.greeting == false">
-              {{ item.username }}：{{ item.msg }}
-            </div>
-            <div v-else>[{{ item.username }}]{{ item.msg }}</div>
+        <div class="list-body" v-if="isuserlist">
+          <div class="p-col-12 dialog" v-for="item in userlist" :key="item">
+            <div>{{ item.name }}</div>
           </div>
+        </div>
+        <div class="text-body" v-else>
+          <template v-for="item in messageSended" :key="item">
+            <div
+              class="p-col-12 dialog"
+              v-bind:class="setMod(rank)"
+              v-if="item.msgShow !== 0"
+            >
+              <img
+                class="iconImg"
+                v-bind:src="`data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAKUlEQVR42u3NQQEAAAQEsJNcdGLw2AqsJukcKLFYLBaLxWKxWCwW/40XmbMs43NUtPcAAAAASUVORK5CYII=
+`"
+              />
+              <div
+                class="text-group"
+                v-if="item.greeting == null || item.greeting == false"
+              >
+                <span v-bind:class="getNameStyle(item)">{{
+                  item.username
+                }}</span
+                >：{{ item.msg }}
+              </div>
+              <div class="text-group" v-else>
+                [{{ item.username }}]{{ item.msg }}
+              </div>
+              <div
+                class="banBtn p-col-12 pi pi-times-circle"
+                @click="banMsg(item)"
+              ></div>
+            </div>
+          </template>
         </div>
       </div>
       <div v-if="rank !== 0" class="p-col-12 input-body">
         <InputText
-          class="p-col-10 p-md-11 p-lg-11"
+          class="p-col-10 p-md-10 p-lg-10"
           type="text"
           ref="input"
           v-model.trim="message"
@@ -31,7 +57,7 @@
         />
         <Button
           label="Warning"
-          class="p-button-warning p-col-2 p-md-1 p-lg-1 btn-send"
+          class="p-button-warning p-lg-2 btn-send"
           :disabled="isTexted"
           @click="send"
           >送出</Button
@@ -87,6 +113,8 @@ import Button from "primevue/button";
 import TabMenu from "primevue/tabmenu";
 import { connectSocket, sendText } from "../utils/api";
 import { uuid } from "../utils/tools.js";
+import axios from "axios";
+import { endpoint } from "../utils/endpoint.js";
 
 // import { endpoint } from "../utils/endpoint.js";
 // import axios from "axios";
@@ -95,30 +123,33 @@ export default {
   name: "chat-room",
   data() {
     return {
-      isdisable: true,
+      isuserlist: false,
       userid: "anonymous",
       usernameSet: "",
       message: "",
       messageSend: [],
       greeting: false,
+      namestyle: "namestyle",
       items: [
         {
           label: "聊天室",
           icon: "pi pi-fw pi-th-large",
-          command: (e) => {
-            // event.originalEvent: Browser event
-            // event.item: Menuitem instance
+          command: () => {
+            this.backtochat();
           },
         },
         {
           label: "線上列表",
           icon: "pi pi-fw pi-users",
-          command: (e) => {
-            // event.originalEvent: Browser event
-            // event.item: Menuitem instance
+          command: () => {
+            this.openuserlist();
           },
         },
       ],
+      namestyle2: {
+        pi: true,
+        "pi-shield": true,
+      },
     };
   },
   watch: {
@@ -127,6 +158,12 @@ export default {
       if (this.rank > 1) {
         this.openWsByToken();
       }
+    },
+    messageSize: function () {
+      this.$nextTick(() => {
+        const el = document.querySelector(".text-body");
+        el.scrollTop = el.scrollHeight;
+      });
     },
   },
   computed: {
@@ -142,34 +179,37 @@ export default {
     messageSended() {
       return this.$store.state.ws.messageCollection;
     },
+    messageSize() {
+      return this.$store.state.ws.messageCollection.length;
+    },
     totalcount() {
       return this.$store.state.ws.totalcount;
     },
     username() {
       return this.$store.state.ws.username;
     },
+    userlist() {
+      let obj = this.$store.state.ws.userlist;
+      obj.sort(this.compare);
+      return obj;
+    },
   },
   methods: {
     send: function () {
       if (this.message != "") {
         let params = {
+          msgHash: uuid(),
           userKey: this.$store.state.ws.userKey,
+          userLevel: this.$store.state.ws.rank,
           username: this.username,
-          msg: this.message,
+          msg: this.maxTextLength(this.message),
+          msgShow: 1,
         };
 
         this.messageSend.push(params);
         sendText(JSON.stringify(params));
-        console.log(this.$store.state.ws.messageCollection);
-        // this.$store.commit("ws/setMessageCollection", params);
       }
       this.message = "";
-      this.$nextTick(() => {
-        const el = document.querySelector(".text-body");
-        el.scrollTop = el.scrollHeight;
-        this.realScrollHeight = el.scrollHeight;
-        this.scrollHeight = el.scrollHeight;
-      });
     },
     checkUser: function () {
       if (this.$store.state.statecenter.token === null) {
@@ -191,26 +231,17 @@ export default {
       this.userid = "anonymous";
     },
     anonymous_set_name: function () {
-      //  const store = useStore();
-      console.log(this.$store.state.ws.username);
       if (this.usernameSet !== "") {
         this.$store.commit("ws/setUsername", "(訪客)" + this.usernameSet);
         let params = {
-          // userid: 0,
           username: "(訪客)" + this.usernameSet,
           avatar: "anonymous",
           greeting: true,
         };
-
         const createUuid = uuid();
         this.$store.commit("ws/setUserkey", createUuid);
-        console.log(this.$store.state.ws.userKey);
         this.$store.commit("ws/setUuidList", createUuid);
-
-        console.log(this.$store.state.ws.uuidList);
-
         const userinfo = JSON.stringify(params);
-        console.log(userinfo);
         connectSocket(userinfo);
       }
     },
@@ -219,19 +250,123 @@ export default {
     },
     openWsByToken() {
       try {
-        let userinfo = {
+        let params = {
           username: this.$store.state.ws.username,
           userid: this.$store.state.ws.userKey,
           greeting: true,
           token: true,
         };
-        console.log("userinfo:" + JSON.stringify(userinfo));
-        connectSocket(JSON.stringify(userinfo));
+        connectSocket(JSON.stringify(params));
       } catch (error) {
-        console.log(error.message);
         this.$store.commit("statecenter/setToken", null);
         localStorage.removeItem("token");
       }
+    },
+    openuserlist() {
+      this.getuserlist();
+      this.isuserlist = true;
+    },
+    backtochat() {
+      this.isuserlist = false;
+    },
+    async getuserlist() {
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: "",
+        "Access-Control-Allow-Origin": "*",
+      };
+      const { data } = await axios.get(
+        endpoint + "chat/rest/v1/userAPI/onlineUserList",
+        {
+          headers: headers,
+        }
+      );
+      // console.log(Object.keys(data));
+      this.$store.commit("ws/setTotalCount", Object.keys(data).length);
+      this.$store.commit("ws/resetUserList");
+      Object.values(data).forEach((item) =>
+        this.$store.commit("ws/setUserList", item)
+      );
+    },
+    getNameStyle(item) {
+      let style = {
+        namestyle: true,
+        pi: false,
+        ["pi-shield"]: false,
+        ["pi-sun"]: false,
+        modstyle: false,
+        masterstyle: false,
+      };
+
+      if (item.userLevel === 3) {
+        style.modstyle = true;
+        style.pi = true;
+        style["pi-shield"] = true;
+      }
+
+      if (item.userLevel === 9) {
+        style.masterstyle = true;
+        style.pi = true;
+        style["pi-sun"] = true;
+      }
+      return style;
+    },
+    setMod(rank) {
+      console.log("style!!:" + rank);
+      let style = {
+        ["dialog-mod"]: false,
+      };
+      if (rank === 3 || rank === 9) {
+        style["dialog-mod"] = true;
+      }
+      return style;
+    },
+    compare(a, b) {
+      if (a.userLevel < b.userLevel) {
+        return -1;
+      }
+      if (a.userLevel > b.userLevel) {
+        return 1;
+      }
+      return 0;
+    },
+    maxTextLength(str) {
+      if (!str) return "";
+      if (str.length > 100) {
+        return str.slice(0, 100) + "...";
+      }
+      return str;
+    },
+    banMsg(item) {
+      if (item != null) {
+        console.log("msgban:" + JSON.stringify(item));
+        let params = {
+          msgHash: item.msgHash,
+          userKey: item.userKey,
+          userLevel: item.userLevel,
+          username: item.username,
+          msg: item.msg,
+          msgShow: 0,
+        };
+        this.messageSend.push(params);
+        sendText(JSON.stringify(params));
+      }
+    },
+    async initMsgHistory() {
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: "",
+        "Access-Control-Allow-Origin": "*",
+      };
+      const { data } = await axios.get(
+        endpoint + "chat/rest/v1/userAPI/msgHistory",
+        {
+          headers: headers,
+        }
+      );
+      Object.values(data).forEach((item) =>
+        this.$store.commit("ws/setMessageCollection", item)
+      );
     },
   },
   components: {
@@ -241,10 +376,12 @@ export default {
   },
   setup() {},
   mounted() {
-    // this.checkUser();
+    this.initMsgHistory();
+    this.getuserlist();
   },
   updated() {
     this.focusInput();
+    this.banMsg();
   },
 };
 </script>
@@ -265,7 +402,8 @@ export default {
   background: var(--surface-d);
   border-radius: 4px;
 }
-.text-body {
+.text-body,
+.list-body {
   position: absolute;
   left: 0;
   /* height: 100%; */
@@ -273,6 +411,7 @@ export default {
   bottom: 76px;
   width: 100%;
   overflow-y: auto;
+  overflow-x: hidden;
   background-color: rgb(241, 250, 226);
 }
 .input-body {
@@ -297,13 +436,51 @@ export default {
   border: 1px solid #73ad21;
   margin: 0;
   text-align: left;
+  position: relative;
+}
+.banBtn {
+  position: absolute;
+  margin-top: -1.9rem;
+  margin-left: -1rem;
+  text-align-last: right;
+  font-size: 1.5rem !important;
+  display: none !important;
+}
+.dialog-mod:hover .banBtn {
+  display: block !important;
 }
 .btn-send {
   justify-content: center;
   color: #ffffff !important;
   font-weight: bold !important;
 }
+.onlinecount {
+  margin-top: 0.9rem !important;
+  position: absolute;
+  margin-left: 3% !important;
+}
 .roommenutab {
   display: flex;
+}
+.namestyle {
+  font-weight: bolder !important;
+}
+.modstyle {
+  color: purple !important;
+}
+.masterstyle {
+  color: orange !important;
+}
+.iconImg {
+  position: absolute;
+  margin-top: -0.3rem;
+  margin-left: -0.3rem;
+  /* text-align-last: right; */
+  font-size: 1.5rem !important;
+  /* display: none !important; */
+}
+.text-group {
+  margin-left: 1.7rem;
+  word-break: break-all;
 }
 </style>

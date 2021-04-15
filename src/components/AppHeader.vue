@@ -35,7 +35,7 @@
   >
     <div class="p-grid">
       <div class="p-field p-col-12">
-        <label class="input-hander" for="nickname">暱稱 - 日後可變更</label>
+        <label class="input-hander" for="nickname">暱稱 - 日後可變更(建議不要超過7個字)</label>
         <InputText
           class="textbox"
           id="nickname"
@@ -249,8 +249,8 @@ export default {
     username() {
       let user = this.$store.state.ws.username;
       if (!user) return "";
-      if (user.length > 4) {
-        return user.slice(0, 4) + "...";
+      if (user.length > 8) {
+        return user.slice(0, 8) + "...";
       }
       return user;
     },
@@ -499,7 +499,7 @@ export default {
 }
 .usermenu,
 .userbtn {
-  width: 9rem !important;
+  // width: 9rem !important;
   display: inline-block !important;
 }
 #nav {

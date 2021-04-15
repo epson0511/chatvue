@@ -2,7 +2,7 @@
   <div class="top">
     <app-head></app-head>
   </div>
-  <div class="content">
+  <div class="content p-grid">
     <router-view />
     <router-view class="p-col-9 mediaroombox" name="Mediaroom"></router-view>
     <router-view class="p-col-3 chatroombox" name="Chatroom"></router-view>
