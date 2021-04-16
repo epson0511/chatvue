@@ -16,7 +16,6 @@ export const connectSocket = (userinfo) => {
   };
 
   socket.onmessage = function(e) {
-
     let resData = JSON.parse(e.data);
     if (resData.rank && store.state.ws.userKey === resData.userId) {
       store.commit("ws/setRank", resData.rank);
@@ -38,7 +37,7 @@ export const connectSocket = (userinfo) => {
 };
 
 export function sendText(msg) {
-  console.log('api-sendText:' + msg);
+  console.log("api-sendText:" + msg);
   socket.send(msg);
 }
 

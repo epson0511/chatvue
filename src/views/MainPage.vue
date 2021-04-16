@@ -1,6 +1,11 @@
 <template>
-  <div class="chat-body">
-    <ChatRoom :key="componentKey"></ChatRoom>
+  <div class="main">
+    <div class="media-body">
+      <MediaRoom :key="componentKey"></MediaRoom>
+    </div>
+    <div class="chat-body">
+      <ChatRoom :key="componentKey"></ChatRoom>
+    </div>
   </div>
 </template>
 
@@ -8,9 +13,10 @@
 // @ is an alias to /src
 // import HelloWorld from '@/components/HelloWorld.vue'
 import ChatRoom from "@/components/ChatRoom.vue";
+import MediaRoom from "@/components/MediaRoom.vue";
 
 export default {
-  name: "chatroom",
+  name: "mainpage",
   data() {
     return {
       componentKey: 0,
@@ -37,6 +43,7 @@ export default {
   },
   components: {
     ChatRoom,
+    MediaRoom,
   },
   methods: {
     forceRerender() {
@@ -46,23 +53,8 @@ export default {
 };
 </script>
 <style>
-.chatroom {
-  /* position: absolute; */
-  /* left: 0;
-  bottom: 0; */
-  /* height: 100px; */
-  /* padding-top: 100px;
-  padding-bottom: 100px; */
-  /* width: 100%;
-  height: 100%; */
-  /* overflow: hidden; */
-  background: #dfdcc9;
-}
-.chat-body {
-  background-color: #dfdcc9;
+.main {
   display: grid;
-  height: 100%;
-  grid-template-rows: 48px 1fr 55px;
-  height: calc(100vh - 120px);
+  grid-template-columns: 80% 20%;
 }
 </style>

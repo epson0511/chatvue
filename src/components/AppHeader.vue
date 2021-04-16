@@ -1,30 +1,33 @@
 <template>
-  <div>This is Header block</div>
-  <div id="nav">
-    <router-link to="/Chatroom">Chatroom</router-link> |
-    <router-link to="/about">About</router-link>
-    <div class="btn-head" v-if="token != null">
-      <Button class="p-button-warning userbtn" type="button" @click="toggle"
-        ><i class="pi pi-user" style="margin-right: 10px"></i
-        >{{ username }}</Button
-      >
-      <Menu class="usermenu" ref="menu" :model="items" :popup="true" />
-    </div>
-    <div class="btn-head" v-else>
-      <Button
-        label="Secondary"
-        class="p-button-raised p-button-secondary"
-        @click="openModalSignin"
-        >註冊</Button
-      >
-      <Button
-        label="Success"
-        class="p-button-raised p-button-success"
-        @click="openModalLogin"
-        >登入</Button
-      >
+  <div class="header">
+    <!-- <router-link to="/Chatroom">Chatroom</router-link> |
+    <router-link to="/about">About</router-link> -->
+
+    <div class="p-col-12">
+      <div class="btn-head" v-if="token != null">
+        <Button class="p-button-warning userbtn" type="button" @click="toggle"
+          ><i class="pi pi-user" style="margin-right: 10px"></i
+          >{{ username }}</Button
+        >
+        <Menu class="usermenu" ref="menu" :model="menuItem" :popup="true" />
+      </div>
+      <div class="btn-head" v-else>
+        <Button
+          label="Secondary"
+          class="p-button-raised p-button-secondary"
+          @click="openModalSignin"
+          >註冊</Button
+        >
+        <Button
+          label="Success"
+          class="p-button-raised p-button-success"
+          @click="openModalLogin"
+          >登入</Button
+        >
+      </div>
     </div>
   </div>
+
   <Dialog
     header="註冊"
     v-model:visible="displaySignin"
@@ -35,7 +38,9 @@
   >
     <div class="p-grid">
       <div class="p-field p-col-12">
-        <label class="input-hander" for="nickname">暱稱 - 日後可變更(建議不要超過7個字)</label>
+        <label class="input-hander" for="nickname"
+          >暱稱 - 日後可變更(建議不要超過7個字)</label
+        >
         <InputText
           class="textbox"
           id="nickname"
@@ -194,7 +199,7 @@ export default {
         usernamelogin: "",
         passwordlogin: "",
       },
-      items: [
+      menuItem: [
         // {
         //   label: "Update",
         //   icon: "pi pi-refresh",
@@ -390,6 +395,7 @@ export default {
         console.log("登入成功");
         localStorage.setItem("token", data.token);
         forceColse();
+        this.$store.commit("ws/resetMessageCollection");
         this.closeModalLogin();
         this.$store.commit("statecenter/setToken", data.token);
         this.setUserByToken();
@@ -439,6 +445,7 @@ export default {
     },
     doLogout() {
       forceColse();
+      this.$store.commit("ws/resetMessageCollection");
       this.$store.commit("ws/setUserkey", "00000");
       this.$store.commit("ws/setUsername", "");
       this.$store.commit("statecenter/setToken", null);
@@ -464,21 +471,30 @@ export default {
 </script>
 <style lang="scss">
 .top {
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 80px;
-  width: 100%;
-  overflow: hidden;
-  background: rgb(226, 167, 39);
-  z-index: 99;
+  // position: absolute;
+  // left: 0;
+  // top: 0;
+  // height: 80px;
+  // width: 100%;
+  // overflow: hidden;
+  // background: rgb(226, 167, 39);
+  // z-index: 1;
 }
+.header {
+  background-color: #e2a727;
+  display: flex;
+  place-items: center;
+  justify-content: flex-end;
+  padding: 0 50px;
+}
+
 .btn-head {
-  position: absolute;
-  left: 34%;
-  bottom: 20px;
+  // position: relative;
+  // left: 34%;
+  // bottom: 20px;
   width: 100%;
   overflow: hidden;
+  text-align: right;
 }
 .p-field {
   margin-bottom: 0 !important;
@@ -500,18 +516,21 @@ export default {
 .usermenu,
 .userbtn {
   // width: 9rem !important;
-  display: inline-block !important;
+  // position: relative;
+  // display: inline-block !important;
 }
-#nav {
-  padding: 30px;
+// #nav {
+//   padding: 5px;
+//   padding-right: 4%;
+//   // position: relative;
 
-  a {
-    font-weight: bold;
-    color: #2c3e50;
+//   a {
+//     font-weight: bold;
+//     color: #2c3e50;
 
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
-}
+//     &.router-link-exact-active {
+//       color: #42b983;
+//     }
+//   }
+// }
 </style>

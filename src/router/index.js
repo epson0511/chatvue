@@ -1,6 +1,6 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 import Chatroom from "../views/Chatroom.vue";
-import Mediaroom from "../views/Mediaroom.vue";
+import MainPage from "../views/MainPage.vue";
 import Test from "../views/Test.vue";
 import Test1 from "../views/Test1.vue";
 
@@ -36,11 +36,8 @@ const routes = [
   },
   {
     path: "/main",
-    name: "main",
-    components: {
-      Mediaroom: Mediaroom,
-      Chatroom: Chatroom,
-    },
+    name: "mainpage",
+    component: MainPage,
   },
 ];
 

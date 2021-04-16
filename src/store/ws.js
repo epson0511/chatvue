@@ -49,6 +49,9 @@ export const mutations = {
   resetUserList(state) {
     state.userlist = [];
   },
+  resetMessageCollection(state) {
+    state.messageCollection = [];
+  },
 };
 export const getters = {};
 

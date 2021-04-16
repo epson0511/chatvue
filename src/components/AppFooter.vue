@@ -1,5 +1,5 @@
 <template>
-  <div>And this is Footer block</div>
+<div class="footer">And this is Footer block</div>
 </template>
 <script>
 export default {
@@ -7,14 +7,8 @@ export default {
 };
 </script>
 <style>
-.bottom {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  height: 20px;
-  width: 100%;
-  overflow: hidden;
-  background: #b5f8e2;
-  z-index: 99;
+.footer {
+  text-align: center;
+  background-color: #b5f8e2;
 }
 </style>

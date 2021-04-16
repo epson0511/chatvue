@@ -1,110 +1,96 @@
 <template>
-  <div class="outer-container p-grid">
-    <div class="p-col-12 text-head">
-      <div class="p-col-11 p-grid p-jc-end onlinecount">
-        線上人數：{{ totalcount }}
-      </div>
-      <TabMenu class="p-col-12 roommenutab" :model="items"></TabMenu>
-      <!-- <router-view /> -->
-    </div>
-    <div class="p-col-12">
-      <div class="p-d-flex p-flex-column p-jc-end">
-        <div class="list-body" v-if="isuserlist">
-          <div class="p-col-12 dialog" v-for="item in userlist" :key="item">
-            <div>{{ item.name }}</div>
-          </div>
-        </div>
-        <div class="text-body" v-else>
-          <template v-for="item in messageSended" :key="item">
-            <div
-              class="p-col-12 dialog"
-              v-bind:class="setMod(rank)"
-              v-if="item.msgShow !== 0"
-            >
-              <img
-                class="iconImg"
-                v-bind:src="`data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAKUlEQVR42u3NQQEAAAQEsJNcdGLw2AqsJukcKLFYLBaLxWKxWCwW/40XmbMs43NUtPcAAAAASUVORK5CYII=
-`"
-              />
-              <div
-                class="text-group"
-                v-if="item.greeting == null || item.greeting == false"
-              >
-                <span v-bind:class="getNameStyle(item)">{{
-                  item.username
-                }}</span
-                >：{{ item.msg }}
-              </div>
-              <div class="text-group" v-else>
-                [{{ item.username }}]{{ item.msg }}
-              </div>
-              <div
-                class="banBtn p-col-12 pi pi-times-circle"
-                @click="banMsg(item)"
-              ></div>
-            </div>
-          </template>
-        </div>
-      </div>
-      <div v-if="rank !== 0" class="p-col-12 input-body">
-        <InputText
-          class="p-col-10 p-md-10 p-lg-10"
-          type="text"
-          ref="input"
-          v-model.trim="message"
-          placeholder="say someting..."
-          @keyup.enter.exact="send"
-        />
-        <Button
-          label="Warning"
-          class="p-button-warning p-lg-2 btn-send"
-          :disabled="isTexted"
-          @click="send"
-          >送出</Button
-        >
-      </div>
-      <div v-else-if="rank === 0" class="p-col-12 input-body">
-        <Button
-          label="Info"
-          class="p-button-info btn-send"
-          v-show="isanonymous"
-          @click="anonymous_set_name_typing"
-          >訪客</Button
-        >
-        <Button
-          class="p-button-danger"
-          label=""
-          icon="pi pi-times"
-          iconPos="right"
-          v-show="!isanonymous"
-          @click="anonymous_back"
-        />
-        <InputText
-          class="p-col-5 p-md-5 p-lg-5"
-          ref="input"
-          type="text"
-          v-show="!isanonymous"
-          v-model.trim="usernameSet"
-          placeholder="set your name..."
-          @keyup.enter="anonymous_set_name"
-        />
-        <Button
-          label=""
-          icon="pi pi-check"
-          iconPos="right"
-          @click="anonymous_set_name"
-          v-show="!isanonymous"
-        />
+  <div class="text-head">
+    <TabMenu class="roommenutab" :model="items"></TabMenu>
+    <div class="onlinecount">線上人數：{{ totalcount }}</div>
 
-        <Button
-          label="Primary"
-          v-show="isanonymous"
-          class="p-button-primary btn-send"
-          @click="openModalLogin"
-          >登入</Button
-        >
+    <!-- <router-view /> -->
+  </div>
+
+  <div class="text-body">
+    <div class="list-body" v-if="isuserlist">
+      <div class="dialog" v-for="item in userlist" :key="item">
+        <div>{{ item.name }}</div>
       </div>
     </div>
+    <div class="text-content" v-else>
+      <template v-for="item in messageSended" :key="item">
+        <div
+          class="dialog"
+          v-bind:class="setMod(rank)"
+          v-if="item.msgShow !== 0"
+        >
+          <div
+            class="text-group"
+            v-if="item.greeting == null || item.greeting == false"
+          >
+            <span v-bind:class="getNameStyle(item)">{{ item.username }}</span
+            >：{{ item.msg }}
+          </div>
+          <div class="text-group" v-else>
+            [{{ item.username }}]{{ item.msg }}
+          </div>
+          <div class="banBtn pi pi-times-circle" @click="banMsg(item)"></div>
+        </div>
+      </template>
+    </div>
+  </div>
+  <div v-if="rank !== 0" class="p-col-12 input-body">
+    <InputText
+      class="p-col-10 p-md-10 p-lg-10"
+      type="text"
+      ref="input"
+      v-model.trim="message"
+      placeholder="say someting..."
+      @keyup.enter.exact="send"
+    />
+    <Button
+      label="Warning"
+      class="p-button-warning p-lg-2 btn-send"
+      :disabled="isTexted"
+      @click="send"
+      >送出</Button
+    >
+  </div>
+  <div v-else-if="rank === 0" class="p-col-12 input-body">
+    <Button
+      label="Info"
+      class="p-button-info btn-send"
+      v-show="isanonymous"
+      @click="anonymous_set_name_typing"
+      >訪客</Button
+    >
+    <Button
+      class="p-button-danger"
+      label=""
+      icon="pi pi-times"
+      iconPos="right"
+      v-show="!isanonymous"
+      @click="anonymous_back"
+    />
+    <InputText
+      class="p-col-5 p-md-5 p-lg-5"
+      ref="input"
+      type="text"
+      v-show="!isanonymous"
+      v-model.trim="usernameSet"
+      placeholder="set your name..."
+      @keyup.enter="anonymous_set_name"
+    />
+    <Button
+      label=""
+      icon="pi pi-check"
+      iconPos="right"
+      @click="anonymous_set_name"
+      v-show="!isanonymous"
+    />
+
+    <Button
+      label="Primary"
+      v-show="isanonymous"
+      class="p-button-primary btn-send"
+      @click="openModalLogin"
+      >登入</Button
+    >
   </div>
 </template>
 <script>
@@ -157,11 +143,13 @@ export default {
       console.log("rank changed");
       if (this.rank > 1) {
         this.openWsByToken();
+      } else {
+        this.$store.commit("ws/resetMessageCollection");
       }
     },
     messageSize: function () {
       this.$nextTick(() => {
-        const el = document.querySelector(".text-body");
+        const el = document.querySelector(".text-content");
         el.scrollTop = el.scrollHeight;
       });
     },
@@ -218,6 +206,7 @@ export default {
         console.log("token exist, verifying...");
 
         // token驗證成功時設定使用者 失敗時刪除token
+
         this.openWsByToken();
       }
     },
@@ -312,7 +301,6 @@ export default {
       return style;
     },
     setMod(rank) {
-      console.log("style!!:" + rank);
       let style = {
         ["dialog-mod"]: false,
       };
@@ -375,8 +363,10 @@ export default {
     TabMenu,
   },
   setup() {},
-  mounted() {
+  beforeMount() {
     this.initMsgHistory();
+  },
+  mounted() {
     this.getuserlist();
   },
   updated() {
@@ -402,20 +392,24 @@ export default {
   background: var(--surface-d);
   border-radius: 4px;
 }
-.text-body,
+.text-content,
 .list-body {
-  position: absolute;
+  /* position: absolute; */
   left: 0;
   /* height: 100%; */
   top: 120px;
   bottom: 76px;
   width: 100%;
   overflow-y: auto;
-  overflow-x: hidden;
   background-color: rgb(241, 250, 226);
+  max-height: calc(100vh - 223px);
+}
+.text-body {
+  z-index: 1;
+  max-height: calc(100vh - 223px);
 }
 .input-body {
-  position: absolute;
+  /* position: absolute; */
   left: 0;
   bottom: 20px;
   width: 100%;
@@ -423,31 +417,39 @@ export default {
   background-color: rgb(129, 136, 238);
 }
 .outer-container {
+  max-height: 100%;
   left: 0;
   overflow: hidden;
 }
 .text-head {
-  position: absolute;
+  /* position: absolute; */
   /* height: 100%; */
-  top: 60px;
-  padding-left: 0 !important;
+  /* top: 60px;
+  padding-left: 0 !important; */
+  display: grid;
+  grid-template-columns: 70% 30%;
 }
 .dialog {
-  border: 1px solid #73ad21;
   margin: 0;
+  padding: 0.4rem;
   text-align: left;
-  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 3rem;
+  /* position: relative; */
 }
 .banBtn {
-  position: absolute;
-  margin-top: -1.9rem;
-  margin-left: -1rem;
+  /* position: absolute; */
+  /* margin-top: -1.9rem;
+  margin-left: -1rem; */
   text-align-last: right;
-  font-size: 1.5rem !important;
+  font-size: 1.3rem !important;
   display: none !important;
 }
 .dialog-mod:hover .banBtn {
   display: block !important;
+}
+.dialog-mod:hover {
+  background-color: peachpuff;
 }
 .btn-send {
   justify-content: center;
@@ -455,12 +457,10 @@ export default {
   font-weight: bold !important;
 }
 .onlinecount {
-  margin-top: 0.9rem !important;
-  position: absolute;
-  margin-left: 3% !important;
+  align-self: center;
 }
 .roommenutab {
-  display: flex;
+  /* display: flex; */
 }
 .namestyle {
   font-weight: bolder !important;
@@ -472,7 +472,7 @@ export default {
   color: orange !important;
 }
 .iconImg {
-  position: absolute;
+  /* position: absolute; */
   margin-top: -0.3rem;
   margin-left: -0.3rem;
   /* text-align-last: right; */
@@ -480,7 +480,8 @@ export default {
   /* display: none !important; */
 }
 .text-group {
-  margin-left: 1.7rem;
+  /* margin-left: 1.7rem; */
   word-break: break-all;
 }
+
 </style>

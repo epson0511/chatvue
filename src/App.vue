@@ -1,13 +1,14 @@
 <template>
-  <div class="top">
+  <div class="container">
     <app-head></app-head>
-  </div>
-  <div class="content p-grid">
-    <router-view />
-    <router-view class="p-col-9 mediaroombox" name="Mediaroom"></router-view>
-    <router-view class="p-col-3 chatroombox" name="Chatroom"></router-view>
-  </div>
-  <div class="bottom">
+
+    <div class="body">
+   
+        <router-view />
+        <!-- <router-view class="mediaroombox" name="Mediaroom"></router-view> -->
+        <!-- <router-view class="chatroombox" name="Chatroom"></router-view> -->
+   
+    </div>
     <app-foot></app-foot>
   </div>
 </template>
@@ -30,18 +31,42 @@ export default {
   text-align: center;
   color: #2c3e50;
 }
-.chatroombox {
-  margin-left: 75%;
-  padding-left: 0 !important;
+// .chatroombox {
+//   margin-left: 75%;
+//   padding-left: 0 !important;
+// }
+// .mediaroombox {
+//   padding-left: 0 !important;
+//   padding-top: 80px !important;
+//   padding-bottom: 20px !important;
+// }
+.container {
+  display: grid;
+  grid-template-rows: 100px 1fr 20px;
+  height: 100vh;
 }
-.mediaroombox {
-  padding-left: 0 !important;
-  padding-top: 80px !important;
-  padding-bottom: 20px !important;
+html,
+body {
+  margin: 0;
+  padding: 0;
 }
-// .content{
-//       margin: 0 0 100px;
-//     /* bottom = footer height */
-//     padding: 100px;
+// .main {
+//   display: grid;
+//   grid-template-columns: 75% 25%;
+// }
+.body {
+  // background-color: #dfdcc9;
+  // display: grid;
+  /* height: 100%; */
+  /* grid-template-rows: 6% 87% 7%; */
+  // grid-template-rows: 48px 1fr 55px;
+  height: calc(100vh - 120px);
+  // display: grid;
+  //  grid-template-rows: 50% 50%;
+}
+// .main {
+//   height: calc(100vh - 120px);
+//   display: grid;
+//   grid-template-columns: 75% 25%;
 // }
 </style>
