@@ -59,7 +59,7 @@ export default {
   background: #dfdcc9;
 }
 .chat-body {
-  background-color: #dfdcc9;
+  background-color: whitesmoke;
   display: grid;
   height: 100%;
   grid-template-rows: 48px 1fr 55px;

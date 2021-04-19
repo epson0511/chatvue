@@ -433,7 +433,7 @@ export default {
             headers: headers,
           }
         );
-        console.log(data);
+        console.log('verify success, now Login:' + data.account);
         this.$store.commit("ws/setUserkey", data.id);
         this.$store.commit("ws/setUsername", data.name);
         this.$store.commit("ws/setRank", data.level);

@@ -1,6 +1,17 @@
 <template>
   <div class="text-head">
-    <TabMenu class="roommenutab" :model="items"></TabMenu>
+    <Button
+      label="聊天室"
+      icon="pi pi-fw pi-th-large"
+      class="p-button-text p-button-help"
+      @click="backtochat"
+    />
+    <Button
+      label="線上列表"
+      icon="pi pi-fw pi-users"
+      class="p-button-text p-button-help"
+      @click="openuserlist"
+    />
     <div class="onlinecount">線上人數：{{ totalcount }}</div>
 
     <!-- <router-view /> -->
@@ -8,8 +19,9 @@
 
   <div class="text-body">
     <div class="list-body" v-if="isuserlist">
-      <div class="dialog" v-for="item in userlist" :key="item">
-        <div>{{ item.name }}</div>
+      <div class="list-item" v-for="item in userlist" :key="item">
+        <span v-bind:class="getIcon(item)"></span
+        ><span v-bind:class="getNameStyle(item)">{{ item.name }}</span>
       </div>
     </div>
     <div class="text-content" v-else>
@@ -23,7 +35,8 @@
             class="text-group"
             v-if="item.greeting == null || item.greeting == false"
           >
-            <span v-bind:class="getNameStyle(item)">{{ item.username }}</span
+            <span v-bind:class="getIcon(item)"></span
+            ><span v-bind:class="getNameStyle(item)">{{ item.username }}</span
             >：{{ item.msg }}
           </div>
           <div class="text-group" v-else>
@@ -96,7 +109,6 @@
 <script>
 import InputText from "primevue/inputtext";
 import Button from "primevue/button";
-import TabMenu from "primevue/tabmenu";
 import { connectSocket, sendText } from "../utils/api";
 import { uuid } from "../utils/tools.js";
 import axios from "axios";
@@ -116,31 +128,11 @@ export default {
       messageSend: [],
       greeting: false,
       namestyle: "namestyle",
-      items: [
-        {
-          label: "聊天室",
-          icon: "pi pi-fw pi-th-large",
-          command: () => {
-            this.backtochat();
-          },
-        },
-        {
-          label: "線上列表",
-          icon: "pi pi-fw pi-users",
-          command: () => {
-            this.openuserlist();
-          },
-        },
-      ],
-      namestyle2: {
-        pi: true,
-        "pi-shield": true,
-      },
     };
   },
   watch: {
     rank: function () {
-      console.log("rank changed");
+      // console.log("rank changed");
       if (this.rank > 1) {
         this.openWsByToken();
       } else {
@@ -193,7 +185,7 @@ export default {
           msg: this.maxTextLength(this.message),
           msgShow: 1,
         };
-
+  this.isuserlist = false;
         this.messageSend.push(params);
         sendText(JSON.stringify(params));
       }
@@ -280,6 +272,38 @@ export default {
     getNameStyle(item) {
       let style = {
         namestyle: true,
+        modstyle: false,
+        masterstyle: false,
+        memstyle0: false,
+        memstyle1: false,
+        memstyle2: false,
+        memstyle3: false,
+        memstyle4: false,
+        memstyle5: false,
+        memstyle6: false,
+        memstyle7: false,
+      };
+
+      if (item.userLevel === 3 || item.level === 3) {
+        style.modstyle = true;
+      } else if (item.userLevel === 9 || item.level === 9) {
+        style.masterstyle = true;
+      } else {
+        let indexKey = parseInt(item.userKey);
+        let indexId = parseInt(item.id);
+        if (!isNaN(indexKey)) {
+          let mem = this.idColorSelecter(indexKey);
+          style[mem] = true;
+        } else if (!isNaN(indexId)) {
+          let mem = this.idColorSelecter(indexId);
+          style[mem] = true;
+        }
+      }
+      return style;
+    },
+    getIcon(item) {
+      let style = {
+        namestyle: true,
         pi: false,
         ["pi-shield"]: false,
         ["pi-sun"]: false,
@@ -287,18 +311,20 @@ export default {
         masterstyle: false,
       };
 
-      if (item.userLevel === 3) {
+      if (item.userLevel === 3 || item.level === 3) {
         style.modstyle = true;
         style.pi = true;
         style["pi-shield"] = true;
-      }
-
-      if (item.userLevel === 9) {
+      } else if (item.userLevel === 9 || item.level === 9) {
         style.masterstyle = true;
         style.pi = true;
         style["pi-sun"] = true;
       }
       return style;
+    },
+    idColorSelecter(userKey) {
+      let index = userKey % 8;
+      return "memstyle" + index;
     },
     setMod(rank) {
       let style = {
@@ -327,7 +353,7 @@ export default {
     },
     banMsg(item) {
       if (item != null) {
-        console.log("msgban:" + JSON.stringify(item));
+        // console.log("msgban:" + JSON.stringify(item));
         let params = {
           msgHash: item.msgHash,
           userKey: item.userKey,
@@ -360,7 +386,6 @@ export default {
   components: {
     InputText,
     Button,
-    TabMenu,
   },
   setup() {},
   beforeMount() {
@@ -401,7 +426,7 @@ export default {
   bottom: 76px;
   width: 100%;
   overflow-y: auto;
-  background-color: rgb(241, 250, 226);
+  background-color: rgb(253, 253, 253);
   max-height: calc(100vh - 223px);
 }
 .text-body {
@@ -414,7 +439,7 @@ export default {
   bottom: 20px;
   width: 100%;
   overflow: hidden;
-  background-color: rgb(129, 136, 238);
+  background-color: rgb(100, 100, 100);
 }
 .outer-container {
   max-height: 100%;
@@ -427,7 +452,15 @@ export default {
   /* top: 60px;
   padding-left: 0 !important; */
   display: grid;
-  grid-template-columns: 70% 30%;
+  grid-template-columns: 6rem 7rem 1fr;
+}
+.text-head .p-button-text {
+  padding: 0rem 0.3rem;
+  background-color:whitesmoke !important;
+  border-radius: 0px !important;
+}
+.text-head .p-button-text .p-button-label {
+  flex: 0 0 auto;
 }
 .dialog {
   margin: 0;
@@ -436,6 +469,11 @@ export default {
   display: grid;
   grid-template-columns: 1fr 3rem;
   /* position: relative; */
+}
+.list-item {
+  margin: 0;
+  padding: 0.4rem;
+  text-align: left;
 }
 .banBtn {
   /* position: absolute; */
@@ -457,7 +495,15 @@ export default {
   font-weight: bold !important;
 }
 .onlinecount {
-  align-self: center;
+background-color:cornsilk;
+
+    display: inline-flex;
+
+    align-items: center;
+    vertical-align: bottom;
+    text-align: center;
+    overflow: hidden;
+    justify-content: center;
 }
 .roommenutab {
   /* display: flex; */
@@ -471,6 +517,30 @@ export default {
 .masterstyle {
   color: orange !important;
 }
+.memstyle0 {
+  color: lemonchiffon;
+}
+.memstyle1 {
+  color: brown;
+}
+.memstyle2 {
+  color: green;
+}
+.memstyle3 {
+  color: blue;
+}
+.memstyle4 {
+  color: lightseagreen;
+}
+.memstyle5 {
+  color: hotpink;
+}
+.memstyle6 {
+  color: skyblue;
+}
+.memstyle7 {
+  color: yellowgreen;
+}
 .iconImg {
   /* position: absolute; */
   margin-top: -0.3rem;
@@ -483,5 +553,4 @@ export default {
   /* margin-left: 1.7rem; */
   word-break: break-all;
 }
-
 </style>
