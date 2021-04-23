@@ -1,2 +1,6 @@
-export const endpoint = 'http://127.0.0.1:8081/';
-export const wsendpoint = 'ws://127.0.0.1:8081/';
+
+const api = process.env.VUE_APP_API
+const port = process.env.VUE_APP_PORT
+
+export const endpoint = 'http://' + api + ':' + port + '/';
+export const wsendpoint = 'ws://' + api + ':' + port + '/';
