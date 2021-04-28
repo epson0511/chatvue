@@ -167,6 +167,31 @@
       <Button label="確認" icon="pi pi-check" @click="loginbycheck" />
     </template>
   </Dialog>
+
+  <Dialog
+    header="驗證"
+    v-model:visible="dispalySucSignin"
+    :modal="true"
+    :closable="false"
+    :breakpoints="{ '960px': '50vw', '640px': '100vw' }"
+    :style="{ width: '320px' }"
+  >
+    <div class="p-grid">
+      <div class="p-field p-col-12">
+        <label class="input-hander"
+          >您已註冊成功，可立即登入使用，系統已寄送一封驗證信至您的信箱，請驗證信箱以便啟用完整功能。</label
+        >
+      </div>
+    </div>
+    <template #footer>
+      <Button
+        label="關閉"
+        icon="pi pi-times"
+        @click="closeModalSuccess"
+        class="p-button-text"
+      />
+    </template>
+  </Dialog>
 </template>
 <script>
 import Button from "primevue/button";
@@ -185,6 +210,7 @@ export default {
     return {
       value1: null,
       displaySignin: false,
+      dispalySucSignin: false,
       email: "",
       nickname: "",
       password: "",
@@ -280,6 +306,9 @@ export default {
       this.err.password = "";
       this.err.passwordconfirm = "";
     },
+    closeModalSuccess() {
+      this.dispalySucSignin = false;
+    },
     openModalLogin() {
       this.$store.commit("statecenter/setLoginBox", true);
     },
@@ -356,7 +385,12 @@ export default {
             headers: headers,
           }
         )
-        .then((res) => console.log(res.data));
+        .then((res) => {
+          if (res.data.status == "200") {
+            this.closeModalSignin();
+            this.dispalySucSignin = true;
+          }
+        });
     },
     loginbycheck() {
       let count = 0;
@@ -433,7 +467,7 @@ export default {
             headers: headers,
           }
         );
-        console.log('verify success, now Login:' + data.account);
+        console.log("verify success, now Login:" + data.account);
         this.$store.commit("ws/setUserkey", data.id);
         this.$store.commit("ws/setUsername", data.name);
         this.$store.commit("ws/setRank", data.level);

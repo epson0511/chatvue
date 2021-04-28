@@ -1,5 +1,5 @@
 <template>
-<div class="footer">And this is Footer block</div>
+<div class="footer">© 2021 BeikaCity(愛普森). All rights reserved.</div>
 </template>
 <script>
 export default {

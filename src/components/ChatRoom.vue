@@ -185,7 +185,7 @@ export default {
           msg: this.maxTextLength(this.message),
           msgShow: 1,
         };
-  this.isuserlist = false;
+        this.isuserlist = false;
         this.messageSend.push(params);
         sendText(JSON.stringify(params));
       }
@@ -284,18 +284,19 @@ export default {
         memstyle7: false,
       };
 
-      if (item.userLevel === 3 || item.level === 3) {
+      if (item.userLevel === 8 || item.level === 8) {
         style.modstyle = true;
       } else if (item.userLevel === 9 || item.level === 9) {
         style.masterstyle = true;
       } else {
-        let indexKey = parseInt(item.userKey);
-        let indexId = parseInt(item.id);
-        if (!isNaN(indexKey)) {
-          let mem = this.idColorSelecter(indexKey);
+        // let indexKey = parseInt(item.userKey);
+        // let indexId = parseInt(item.id);
+
+        if (item.level != 1 && item.userKey === parseInt(item.userKey, 10)) {
+          let mem = this.idColorSelecter(parseInt(item.userKey));
           style[mem] = true;
-        } else if (!isNaN(indexId)) {
-          let mem = this.idColorSelecter(indexId);
+        } else if (item.level != 1 && item.id === parseInt(item.id, 10)) {
+          let mem = this.idColorSelecter(parseInt(item.id));
           style[mem] = true;
         }
       }
@@ -311,7 +312,7 @@ export default {
         masterstyle: false,
       };
 
-      if (item.userLevel === 3 || item.level === 3) {
+      if (item.userLevel === 8 || item.level === 8) {
         style.modstyle = true;
         style.pi = true;
         style["pi-shield"] = true;
@@ -330,7 +331,7 @@ export default {
       let style = {
         ["dialog-mod"]: false,
       };
-      if (rank === 3 || rank === 9) {
+      if (rank === 8 || rank === 9) {
         style["dialog-mod"] = true;
       }
       return style;
@@ -456,7 +457,7 @@ export default {
 }
 .text-head .p-button-text {
   padding: 0rem 0.3rem;
-  background-color:whitesmoke !important;
+  background-color: whitesmoke !important;
   border-radius: 0px !important;
 }
 .text-head .p-button-text .p-button-label {
@@ -495,15 +496,15 @@ export default {
   font-weight: bold !important;
 }
 .onlinecount {
-background-color:cornsilk;
+  background-color: cornsilk;
 
-    display: inline-flex;
+  display: inline-flex;
 
-    align-items: center;
-    vertical-align: bottom;
-    text-align: center;
-    overflow: hidden;
-    justify-content: center;
+  align-items: center;
+  vertical-align: bottom;
+  text-align: center;
+  overflow: hidden;
+  justify-content: center;
 }
 .roommenutab {
   /* display: flex; */
@@ -518,7 +519,7 @@ background-color:cornsilk;
   color: orange !important;
 }
 .memstyle0 {
-  color: lemonchiffon;
+  color: deeppink;
 }
 .memstyle1 {
   color: brown;

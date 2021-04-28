@@ -8,12 +8,18 @@ const routes = [
   {
     path: "/",
     name: "Home",
-    // component: Chatroom
+    component: MainPage,
+    meta: {
+      title: "首頁",
+    },
   },
   {
     path: "/chatroom",
     name: "Chatroom",
     component: Chatroom,
+    meta: {
+      title: "聊天室",
+    },
   },
   {
     path: "/about",
@@ -38,12 +44,22 @@ const routes = [
     path: "/main",
     name: "mainpage",
     component: MainPage,
+    meta: {
+      title: "主頁",
+    },
   },
 ];
 
 const router = createRouter({
   history: createWebHashHistory(),
   routes,
+});
+
+router.beforeEach((to, from, next) => {
+  if (to.meta.title) {
+    document.title = to.meta.title;
+  }
+  next();
 });
 
 export default router;
