@@ -390,7 +390,9 @@ export default {
   },
   setup() {},
   beforeMount() {
-    this.initMsgHistory();
+    if (this.$store.state.ws.messageCollection.length === 0) {
+      this.initMsgHistory();
+    }
   },
   mounted() {
     this.getuserlist();

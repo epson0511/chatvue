@@ -37,7 +37,7 @@ export const connectSocket = (userinfo) => {
 };
 
 export function sendText(msg) {
-//   console.log("api-sendText:" + msg);
+  //   console.log("api-sendText:" + msg);
   socket.send(msg);
 }
 
@@ -46,3 +46,4 @@ export function forceColse() {
     socket.close();
   }
 }
+

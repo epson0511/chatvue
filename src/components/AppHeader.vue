@@ -1,9 +1,12 @@
 <template>
   <div class="header">
+    <div class="p-col-5">
+      <div class="title-head" @click="openFrontPage">回首頁</div>
+    </div>
     <!-- <router-link to="/Chatroom">Chatroom</router-link> |
     <router-link to="/about">About</router-link> -->
 
-    <div class="p-col-12">
+    <div class="p-col-7">
       <div class="btn-head" v-if="token != null">
         <Button class="p-button-warning userbtn" type="button" @click="toggle"
           ><i class="pi pi-user" style="margin-right: 10px"></i
@@ -292,6 +295,9 @@ export default {
   //   },
   // },
   methods: {
+    openFrontPage() {
+      this.$router.push({path:'/main'})
+    },
     openModalSignin() {
       this.displaySignin = true;
     },
@@ -529,6 +535,10 @@ export default {
   width: 100%;
   overflow: hidden;
   text-align: right;
+}
+.title-head {
+  text-align: left;
+  font-size: 2em;
 }
 .p-field {
   margin-bottom: 0 !important;

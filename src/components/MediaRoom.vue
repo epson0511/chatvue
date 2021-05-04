@@ -1,18 +1,18 @@
 <template>
   <div class="mediaroom">
     <!-- <div class="video-container"> -->
-    <iframe
+    <!-- <iframe
       class="video-container"
       src="https://www.youtube.com/embed/wHNKtYo68Eo"
       frameborder="0"
       allowfullscreen
-    ></iframe>
-    <!-- <iframe
+    ></iframe> -->
+    <iframe
       class="video-container"
-      src="https://player.twitch.tv/?channel=muse_tw&muted=false&autoplay=true&parent=localhost"
+      src="https://player.twitch.tv/?channel=muse_tw&muted=false&autoplay=true&parent=beika.city"
       frameborder="0"
       allowfullscreen
-    ></iframe> -->
+    ></iframe>
     <!-- </div> -->
   </div>
 </template>
