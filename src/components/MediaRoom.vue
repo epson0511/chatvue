@@ -9,14 +9,44 @@
     ></iframe> -->
     <iframe
       class="video-container"
-      src="https://player.twitch.tv/?channel=muse_tw&muted=false&autoplay=true&parent=beika.city"
+      v-bind:src="url"
       frameborder="0"
       allowfullscreen
     ></iframe>
     <!-- </div> -->
   </div>
 </template>
+
 <script>
+export default {
+  data() {
+    return {};
+  },
+  computed: {
+    url: function () {
+      return this.$store.state.statecenter.channelURL;
+    },
+  },
+  mounted() {
+    this.$store.commit(
+      "statecenter/setChannelURL",
+      "https://player.twitch.tv/?channel=muse_tw&muted=false&autoplay=true&parent=" +
+        location.host.split(":")[0]
+    );
+  },
+  methods: {},
+};
+
+// import ''
+// var options = {
+//   width: 854,
+//   height: 480,
+//   channel: "muse_tw",
+//   // Only needed if this page is going to be embedded on other websites
+//   parent: ["beika.city", "www.beika.city"]
+// };
+// var player = new Twitch.Player("SamplePlayerDivID", options);
+// player.setVolume(0.5);
 </script>
 
 <style>

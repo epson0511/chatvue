@@ -42,7 +42,7 @@ export default {
 // }
 .container {
   display: grid;
-  grid-template-rows: 100px 1fr 20px;
+  grid-template-rows: 70px 1fr 20px;
   height: 100vh;
 }
 html,
@@ -60,7 +60,7 @@ body {
   /* height: 100%; */
   /* grid-template-rows: 6% 87% 7%; */
   // grid-template-rows: 48px 1fr 55px;
-  height: calc(100vh - 120px);
+  height: calc(100vh - 90px);
   // display: grid;
   //  grid-template-rows: 50% 50%;
 }

@@ -63,6 +63,6 @@ export default {
   display: grid;
   height: 100%;
   grid-template-rows: 48px 1fr 55px;
-  height: calc(100vh - 120px);
+  height: calc(100vh - 90px);
 }
 </style>

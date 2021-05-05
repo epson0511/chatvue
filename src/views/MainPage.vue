@@ -1,6 +1,11 @@
 <template>
   <div class="main">
     <div class="media-body">
+      <div class="channel-switcher">
+        <div @click="to_musetw">木棉花</div>
+        <div @click="to_fc2">柯南台</div>
+        <div @click="to_vl">失效</div>
+      </div>
       <MediaRoom :key="componentKey"></MediaRoom>
     </div>
     <div class="chat-body">
@@ -49,6 +54,19 @@ export default {
     forceRerender() {
       this.componentKey += 1;
     },
+    to_musetw: function () {
+      this.$store.commit(
+        "statecenter/setChannelURL",
+        "https://player.twitch.tv/?channel=muse_tw&muted=false&autoplay=true&parent=" +
+          location.host.split(":")[0]
+      );
+    },
+    to_fc2: function () {
+      this.$store.commit(
+        "statecenter/setChannelURL",
+        "https://live.fc2.com/embedPlayer/?id=64589205&lang=tw&suggest=1&thumbnail=1&adultaccess=0"
+      );
+    },
   },
 };
 </script>
@@ -56,5 +74,12 @@ export default {
 .main {
   display: grid;
   grid-template-columns: 80% 20%;
+}
+.channel-switcher {
+  display: grid;
+  display: inline-flex;
+  position: fixed;
+  overflow: hidden;
+  right: 20%;
 }
 </style>

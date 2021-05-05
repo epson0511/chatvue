@@ -9,6 +9,7 @@ export default {
 <style>
 .footer {
   text-align: center;
-  background-color: #b5f8e2;
+  background-color:rgb(32, 0, 70);
+  color: white;
 }
 </style>
