@@ -1,15 +1,18 @@
 <template>
-  <div class="container">
+  <div v-if="!isMainPage()" class="container">
     <app-head></app-head>
 
     <div class="body">
-   
-        <router-view />
-        <!-- <router-view class="mediaroombox" name="Mediaroom"></router-view> -->
-        <!-- <router-view class="chatroombox" name="Chatroom"></router-view> -->
-   
+      <router-view />
     </div>
     <app-foot></app-foot>
+  </div>
+  <div v-if="isMainPage()" class="container_for_main">
+    <app-head></app-head>
+
+    <div class="body_for_main">
+      <router-view />
+    </div>
   </div>
 </template>
 <script>
@@ -17,6 +20,18 @@ import AppHead from "@/components/AppHeader.vue";
 import AppFoot from "@/components/AppFooter.vue";
 
 export default {
+  data() {
+    return {};
+  },
+  methods: {
+    isMainPage: function () {
+      if (this.$route.name === "mainpage") {
+        return true;
+      } else {
+        return false;
+      }
+    },
+  },
   components: {
     AppHead,
     AppFoot,
@@ -45,6 +60,11 @@ export default {
   grid-template-rows: 70px 1fr 20px;
   height: 100vh;
 }
+.container_for_main {
+  display: grid;
+  grid-template-rows: 70px 1fr;
+  height: 100vh;
+}
 html,
 body {
   margin: 0;
@@ -55,18 +75,9 @@ body {
 //   grid-template-columns: 75% 25%;
 // }
 .body {
-  // background-color: #dfdcc9;
-  // display: grid;
-  /* height: 100%; */
-  /* grid-template-rows: 6% 87% 7%; */
-  // grid-template-rows: 48px 1fr 55px;
   height: calc(100vh - 90px);
-  // display: grid;
-  //  grid-template-rows: 50% 50%;
 }
-// .main {
-//   height: calc(100vh - 120px);
-//   display: grid;
-//   grid-template-columns: 75% 25%;
-// }
+.bodybody_for_main {
+  height: calc(100vh - 70px);
+}
 </style>

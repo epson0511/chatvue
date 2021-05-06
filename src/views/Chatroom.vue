@@ -47,15 +47,6 @@ export default {
 </script>
 <style>
 .chatroom {
-  /* position: absolute; */
-  /* left: 0;
-  bottom: 0; */
-  /* height: 100px; */
-  /* padding-top: 100px;
-  padding-bottom: 100px; */
-  /* width: 100%;
-  height: 100%; */
-  /* overflow: hidden; */
   background: #dfdcc9;
 }
 .chat-body {

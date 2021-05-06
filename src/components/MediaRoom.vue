@@ -76,6 +76,23 @@ export default {
   width: 100%;
   height: 100%;
 }
+.media-body:hover .channel-switcher {
+  display: inline-flex;
+}
+
+@keyframes switcher-pushin {
+  0% {
+    height: 0%;
+  }
+  100% {
+    height: 39px;
+  }
+
+}
+
+.media-body:hover .channel-switcher {
+  animation: switcher-pushin 0.8s;
+}
 /* .video {
   position: absolute;
   top: 0;

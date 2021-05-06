@@ -7,12 +7,12 @@
       @click="backtochat"
     />
     <Button
-      label="線上列表"
+      v-bind:label="onlineshow"
       icon="pi pi-fw pi-users"
       class="p-button-text p-button-help"
       @click="openuserlist"
     />
-    <div class="onlinecount">線上人數：{{ totalcount }}</div>
+    <div class="pi pi-external-link popoutchat" @click="popchatroom">僅聊天</div>
 
     <!-- <router-view /> -->
   </div>
@@ -173,6 +173,9 @@ export default {
       obj.sort(this.compare);
       return obj;
     },
+    onlineshow(){
+      return "線上列表 (" + this.totalcount + ")"
+    }
   },
   methods: {
     send: function () {
@@ -249,6 +252,9 @@ export default {
     },
     backtochat() {
       this.isuserlist = false;
+    },
+    popchatroom(){
+      this.$router.push({path:'/chatroom'})
     },
     async getuserlist() {
       const headers = {
@@ -430,11 +436,11 @@ export default {
   width: 100%;
   overflow-y: auto;
   background-color: rgb(253, 253, 253);
-  max-height: calc(100vh - 223px);
+  max-height: calc(100vh - 195px);
 }
 .text-body {
   z-index: 1;
-  max-height: calc(100vh - 223px);
+  max-height: calc(100vh - 195px);
 }
 .input-body {
   /* position: absolute; */
@@ -455,7 +461,7 @@ export default {
   /* top: 60px;
   padding-left: 0 !important; */
   display: grid;
-  grid-template-columns: 6rem 7rem 1fr;
+  grid-template-columns: 6rem 8.5rem 1fr;
 }
 .text-head .p-button-text {
   padding: 0rem 0.3rem;
@@ -497,10 +503,10 @@ export default {
   color: #ffffff !important;
   font-weight: bold !important;
 }
-.onlinecount {
+.popoutchat {
   background-color: cornsilk;
 
-  display: inline-flex;
+  display: inline-flex !important;
 
   align-items: center;
   vertical-align: bottom;

@@ -1,6 +1,7 @@
-import { createRouter, createWebHistory} from "vue-router";
+import { createRouter, createWebHashHistory} from "vue-router";
 import Chatroom from "../views/Chatroom.vue";
 import MainPage from "../views/MainPage.vue";
+import Home from "../views/Home.vue";
 import Test from "../views/Test.vue";
 import Test1 from "../views/Test1.vue";
 
@@ -8,9 +9,9 @@ const routes = [
   {
     path: "/",
     name: "Home",
-    component: MainPage,
+    component: Home,
     meta: {
-      title: "米花(Alpha) - 首頁",
+      title: "米花巴庫蛋(Alpha) - 首頁",
     },
   },
   {
@@ -18,7 +19,7 @@ const routes = [
     name: "Chatroom",
     component: Chatroom,
     meta: {
-      title: "米花(Alpha) - 聊天室",
+      title: "米花巴庫蛋(Alpha) - 聊天室",
     },
   },
   {
@@ -45,14 +46,14 @@ const routes = [
     name: "mainpage",
     component: MainPage,
     meta: {
-      title: "米花(Alpha) - 首頁",
+      title: "米花巴庫蛋(Alpha) - 直播間",
     },
   },
 ];
 
 const router = createRouter({
-  history: createWebHistory(),
-  // history: createWebHashHistory(),
+  // history: createWebHistory(),
+  history: createWebHashHistory(),
   routes,
 });
 

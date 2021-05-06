@@ -1,7 +1,7 @@
 <template>
   <div class="header">
     <div class="p-col-5">
-      <div class="title-head" @click="openFrontPage">回首頁</div>
+      <div class="title-head" @click="openFrontPage">首頁</div>
     </div>
     <!-- <router-link to="/Chatroom">Chatroom</router-link> |
     <router-link to="/about">About</router-link> -->
@@ -296,7 +296,7 @@ export default {
   // },
   methods: {
     openFrontPage() {
-      this.$router.push({path:'/main'})
+      this.$router.push({path:'/'})
     },
     openModalSignin() {
       this.displaySignin = true;
