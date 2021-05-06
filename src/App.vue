@@ -77,7 +77,7 @@ body {
 .body {
   height: calc(100vh - 90px);
 }
-.bodybody_for_main {
+.chat-body_for_main {
   height: calc(100vh - 70px);
 }
 </style>

@@ -296,7 +296,7 @@ export default {
   // },
   methods: {
     openFrontPage() {
-      this.$router.push({path:'/'})
+      this.$router.push({ path: "/" });
     },
     openModalSignin() {
       this.displaySignin = true;
@@ -537,7 +537,7 @@ export default {
   text-align: right;
 }
 .title-head {
-  text-align: left;
+  float: left;
   font-size: 2em;
 }
 .p-field {
