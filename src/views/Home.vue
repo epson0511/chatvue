@@ -3,11 +3,17 @@
     <div class="quicklinkdiv">
       <QuickLink></QuickLink>
     </div>
-    <div class="home-title">歡迎回到米花市</div>
+    <div class="home-title">愛普森重返農藥</div>
     <div class="home-body">
       <div class="text-area">
         <Panel header="雜談">
-          米花市重返農藥！如果迷路請按左上角首頁回來此頁尋找路徑。設計上盡量弄成與之前很像的介面，目前只有提供觀看與打字聊天的功能，說不定還bug一堆，隨機被玩壞。因為現在是alpha版，之後應該會刪除檔案，所以隨便註冊無所謂，驗證信箱現在有問題信還寄不出去，遇到問題請直接line群組回報，一人開發超沒良心，可能半年後才會beta版。
+          <p>● 據說是所謂的愛普森直播</p>
+          <p>● 這邊基本會有柯南、獵人、棋靈王、中華一番或美食劇之類的東東</p>
+          <p>
+            ●
+            目前ahpha版註冊無限制，而且還有很多功能待開發，比如說現在我也不能ban人之類的，等規則訂好之後會刪檔建立正式資料(那就是beta版的事了)
+          </p>
+          <p>● 目標是建立一個小眾社群，在這邊有一個輕鬆的聚集地</p>
         </Panel>
         <br />
         <Panel header="待開發">
@@ -18,23 +24,31 @@
           <p>5. 吉祥物設計</p>
           <p>6. 自動從YT點播影片功能</p>
           <p>7. 想到再繼續寫</p>
-          <p style="color: blue">歡迎提供想法</p>
+          <a
+            target="_blank"
+            href="https://docs.google.com/forms/d/1jHpJMbouZ_thJBV0gPoHE3Xq9YmFNqMtKTh6QwcQy70"
+          >
+            <span style="color: blue">歡迎提供想法</span>
+          </a>
         </Panel>
         <br />
         <Panel header="已知問題">
           <p>1. 寄發驗證信問題</p>
-          <p style="color: blue">歡迎回報</p>
+          <a
+            target="_blank"
+            href="https://docs.google.com/forms/d/1jHpJMbouZ_thJBV0gPoHE3Xq9YmFNqMtKTh6QwcQy70"
+          >
+            <span style="color: blue">歡迎回報</span>
+          </a>
         </Panel>
         <br />
         <Panel header="開發日誌">
-          <p>● front-end Vue 3.0</p>
-          <p>● back-end SpringBoot</p>
-          <p>● DB MySQL</p>
-          <p>● build Docker</p>
-          <p>● Cluster(VM) GKE by GCP</p>
-          待實做架構
-          <p>● certificate cert-manager(auto renew ssl certificate)</p>
-          <p>● NoSQL redis</p>
+          <p>● UI / 愛普森</p>
+          <p>● Front-end / 愛普森</p>
+          <p>● back-end / 愛普森</p>
+          <p>● GKE架設 / 愛普森</p>
+          <p>● 特別致謝 / 愛普森</p>
+          <p>蛤 就一人開發啊 阿不然咧</p>
         </Panel>
       </div>
     </div>

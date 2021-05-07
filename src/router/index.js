@@ -2,8 +2,8 @@ import { createRouter, createWebHashHistory} from "vue-router";
 import Chatroom from "../views/Chatroom.vue";
 import MainPage from "../views/MainPage.vue";
 import Home from "../views/Home.vue";
-import Test from "../views/Test.vue";
-import Test1 from "../views/Test1.vue";
+import User from "../views/User.vue";
+
 
 const routes = [
   {
@@ -32,14 +32,12 @@ const routes = [
       import(/* webpackChunkName: "about" */ "../views/About.vue"),
   },
   {
-    path: "/test",
-    name: "test",
-    component: Test,
-  },
-  {
-    path: "/test1",
-    name: "test1",
-    component: Test1,
+    path: "/user/:userId",
+    name: "user",
+    component: User,
+    meta: {
+      title: "米花巴庫蛋(Alpha) - 使用者頁面",
+    },
   },
   {
     path: "/main",
