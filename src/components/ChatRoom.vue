@@ -12,7 +12,9 @@
       class="p-button-text p-button-help"
       @click="openuserlist"
     />
-    <div class="pi pi-external-link popoutchat" @click="popchatroom">僅聊天</div>
+    <div class="pi pi-external-link popoutchat" @click="popchatroom">
+      僅聊天
+    </div>
 
     <!-- <router-view /> -->
   </div>
@@ -173,9 +175,9 @@ export default {
       obj.sort(this.compare);
       return obj;
     },
-    onlineshow(){
-      return "線上列表 (" + this.totalcount + ")"
-    }
+    onlineshow() {
+      return "線上列表 (" + this.totalcount + ")";
+    },
   },
   methods: {
     send: function () {
@@ -252,9 +254,13 @@ export default {
     },
     backtochat() {
       this.isuserlist = false;
+      this.$nextTick(() => {
+        const el = document.querySelector(".text-content");
+        el.scrollTop = el.scrollHeight;
+      });
     },
-    popchatroom(){
-      this.$router.push({path:'/chatroom'})
+    popchatroom() {
+      this.$router.push({ path: "/chatroom" });
     },
     async getuserlist() {
       const headers = {
