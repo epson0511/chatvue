@@ -5,7 +5,12 @@
         <Button
           v-bind:class="museActive ? active : notactive"
           @click="to_musetw"
-          >木棉花</Button
+          >木棉圖</Button
+        >
+        <Button
+          v-bind:class="museytActive ? active : notactive"
+          @click="to_museyt"
+          >木棉油</Button
         >
         <Button v-bind:class="affActive ? active : notactive" @click="to_aff"
           >柯南主</Button
@@ -35,8 +40,10 @@ export default {
     return {
       componentKey: 0,
       museActive: true,
+      museytActive: false,
       affActive: false,
       fc2Active: false,
+
       active: {
         ["p-button-outlined"]: false,
         ["p-button-help"]: true,
@@ -75,8 +82,10 @@ export default {
     forceRerender() {
       this.componentKey += 1;
     },
+
     to_musetw: function () {
       this.museActive = true;
+      this.museytActive = false;
       this.affActive = false;
       this.fc2Active = false;
       this.$store.commit(
@@ -85,8 +94,19 @@ export default {
           location.host.split(":")[0]
       );
     },
+    to_museyt: function () {
+      this.museActive = false;
+      this.museytActive = true;
+      this.affActive = false;
+      this.fc2Active = false;
+      this.$store.commit(
+        "statecenter/setChannelURL",
+        "https://www.youtube.com/embed/BFjZFdd_gmQ"
+      );
+    },
     to_aff: function () {
       this.museActive = false;
+      this.museytActive = false;
       this.affActive = true;
       this.fc2Active = false;
       this.$store.commit(
@@ -96,6 +116,7 @@ export default {
     },
     to_fc2: function () {
       this.museActive = false;
+      this.museytActive = false;
       this.affActive = false;
       this.fc2Active = true;
       this.$store.commit(
@@ -109,10 +130,12 @@ export default {
 <style>
 .main {
   display: grid;
+  grid-template-columns: 80% 20%;
 }
-@media screen and (min-width: 900px) {
+@media screen and (max-width: 900px) {
   .main {
-    grid-template-columns: 80% 20%;
+    grid-template-columns: none;
+    grid-template-rows: 200px 1fr;
   }
 }
 
@@ -128,5 +151,11 @@ export default {
 }
 .container_for_main .chat-body {
   height: calc(100vh - 70px);
+}
+.container_for_main .text-content {
+  max-height: calc(100vh - 175px);
+}
+.container_for_main .list-body {
+  max-height: calc(100vh - 175px);
 }
 </style>

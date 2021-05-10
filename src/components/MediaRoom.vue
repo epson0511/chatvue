@@ -12,6 +12,7 @@
       v-bind:src="url"
       frameborder="0"
       allowfullscreen
+      allow="autoplay"
     ></iframe>
     <!-- </div> -->
   </div>
@@ -87,7 +88,6 @@ export default {
   100% {
     height: 39px;
   }
-
 }
 
 .media-body:hover .channel-switcher {

@@ -33,79 +33,75 @@
           v-bind:class="setMod(rank)"
           v-if="item.msgShow !== 0"
         >
-          <div
-            class="text-group"
-            v-if="item.greeting == null || item.greeting == false"
-          >
+          <div class="text-group" v-if="item.greeting == null">
             <span v-bind:class="getIcon(item)"></span
             ><span v-bind:class="getNameStyle(item)">{{ item.username }}</span
             >：{{ item.msg }}
           </div>
-          <div class="text-group" v-else>
-            [{{ item.username }}]{{ item.msg }}
-          </div>
+          <span class="msgTime">{{ item.msgTime }}</span>
           <div class="banBtn pi pi-times-circle" @click="banMsg(item)"></div>
         </div>
       </template>
     </div>
   </div>
-  <div v-if="rank !== 0" class="p-col-12 input-body">
-    <InputText
-      class="p-col-10 p-md-10 p-lg-10"
-      type="text"
-      ref="input"
-      v-model.trim="message"
-      placeholder="say someting..."
-      @keyup.enter.exact="send"
-    />
-    <Button
-      label="Warning"
-      class="p-button-warning p-lg-2 btn-send"
-      :disabled="isTexted"
-      @click="send"
-      >送出</Button
-    >
-  </div>
-  <div v-else-if="rank === 0" class="p-col-12 input-body">
-    <Button
-      label="Info"
-      class="p-button-info btn-send"
-      v-show="isanonymous"
-      @click="anonymous_set_name_typing"
-      >訪客</Button
-    >
-    <Button
-      class="p-button-danger"
-      label=""
-      icon="pi pi-times"
-      iconPos="right"
-      v-show="!isanonymous"
-      @click="anonymous_back"
-    />
-    <InputText
-      class="p-col-5 p-md-5 p-lg-5"
-      ref="input"
-      type="text"
-      v-show="!isanonymous"
-      v-model.trim="usernameSet"
-      placeholder="set your name..."
-      @keyup.enter="anonymous_set_name"
-    />
-    <Button
-      label=""
-      icon="pi pi-check"
-      iconPos="right"
-      @click="anonymous_set_name"
-      v-show="!isanonymous"
-    />
-
-    <Button
-      label="Primary"
-      v-show="isanonymous"
-      class="p-button-primary btn-send"
-      @click="openModalLogin"
-      >登入</Button
-    >
+  <div v-if="!isuserlist">
+    <div v-if="rank !== 0" class="p-col-12 input-body">
+      <InputText
+        class="p-col-10 p-md-10 p-lg-10"
+        type="text"
+        ref="input"
+        v-model.trim="message"
+        placeholder="say someting..."
+        @keyup.enter.exact="send"
+      />
+      <Button
+        label="Warning"
+        class="p-button-warning p-lg-2 btn-send"
+        :disabled="isTexted"
+        @click="send"
+        >送出</Button
+      >
+    </div>
+    <div v-else-if="rank === 0" class="p-col-12 input-body">
+      <Button
+        label="Info"
+        class="p-button-info btn-send"
+        v-show="isanonymous"
+        @click="anonymous_set_name_typing"
+        >訪客</Button
+      >
+      <Button
+        class="p-button-danger"
+        label=""
+        icon="pi pi-times"
+        iconPos="right"
+        v-show="!isanonymous"
+        @click="anonymous_back"
+      />
+      <InputText
+        class="p-col-5 p-md-5 p-lg-5"
+        ref="input"
+        type="text"
+        v-show="!isanonymous"
+        v-model.trim="usernameSet"
+        placeholder="set your name..."
+        @keyup.enter="anonymous_set_name"
+      />
+      <Button
+        label=""
+        icon="pi pi-check"
+        iconPos="right"
+        @click="anonymous_set_name"
+        v-show="!isanonymous"
+      />
+      <Button
+        label="Primary"
+        v-show="isanonymous"
+        class="p-button-primary btn-send"
+        @click="openModalLogin"
+        >登入</Button
+      >
+    </div>
   </div>
 </template>
 <script>
@@ -142,6 +138,11 @@ export default {
       }
     },
     messageSize: function () {
+      console.log(
+        this.$store.state.ws.messageCollection[
+          this.$store.state.ws.messageCollection.length - 1
+        ]
+      );
       this.$nextTick(() => {
         const el = document.querySelector(".text-content");
         el.scrollTop = el.scrollHeight;
@@ -195,6 +196,7 @@ export default {
         sendText(JSON.stringify(params));
       }
       this.message = "";
+      this.focusInput();
     },
     checkUser: function () {
       if (this.$store.state.statecenter.token === null) {
@@ -227,6 +229,7 @@ export default {
         const createUuid = uuid();
         this.$store.commit("ws/setUserkey", createUuid);
         this.$store.commit("ws/setUuidList", createUuid);
+        this.focusInput();
         const userinfo = JSON.stringify(params);
         connectSocket(userinfo);
       }
@@ -257,6 +260,7 @@ export default {
       this.$nextTick(() => {
         const el = document.querySelector(".text-content");
         el.scrollTop = el.scrollHeight;
+        this.focusInput();
       });
     },
     popchatroom() {
@@ -294,6 +298,10 @@ export default {
         memstyle5: false,
         memstyle6: false,
         memstyle7: false,
+        memstyle8: false,
+        memstyle9: false,
+        memstyle10: false,
+        memstyle11: false,
       };
 
       if (item.userLevel === 8 || item.level === 8) {
@@ -336,7 +344,7 @@ export default {
       return style;
     },
     idColorSelecter(userKey) {
-      let index = userKey % 8;
+      let index = userKey % 12;
       return "memstyle" + index;
     },
     setMod(rank) {
@@ -408,9 +416,13 @@ export default {
   },
   mounted() {
     this.getuserlist();
+    this.$nextTick(() => {
+      const el = document.querySelector(".text-content");
+      el.scrollTop = el.scrollHeight;
+    });
   },
   updated() {
-    this.focusInput();
+    // this.focusInput();
     this.banMsg();
   },
 };
@@ -503,6 +515,7 @@ export default {
 }
 .dialog-mod:hover {
   background-color: peachpuff;
+  grid-template-columns: 1fr 3rem 1.5rem;
 }
 .btn-send {
   justify-content: center;
@@ -539,7 +552,7 @@ export default {
   color: brown;
 }
 .memstyle2 {
-  color: green;
+  color: lime;
 }
 .memstyle3 {
   color: blue;
@@ -556,6 +569,18 @@ export default {
 .memstyle7 {
   color: yellowgreen;
 }
+.memstyle8 {
+  color: gold;
+}
+.memstyle9 {
+  color: royalblue;
+}
+.memstyle10 {
+  color: chocolate;
+}
+.memstyle11 {
+  color: crimson;
+}
 .iconImg {
   /* position: absolute; */
   margin-top: -0.3rem;
@@ -563,6 +588,12 @@ export default {
   /* text-align-last: right; */
   font-size: 1.5rem !important;
   /* display: none !important; */
+}
+.msgTime {
+  align-content: flex-end;
+  font-size: 0.1rem;
+  text-align: end;
+  color: darkgray;
 }
 .text-group {
   /* margin-left: 1.7rem; */

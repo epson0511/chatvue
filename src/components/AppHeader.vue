@@ -71,7 +71,7 @@
         <span id="email-help" class="p-error err-hander">{{ err.email }}</span>
       </div>
       <div class="p-field p-col-12">
-        <label class="input-hander" for="password">密碼</label>
+        <label class="input-hander" for="password">密碼 - 需介於6-10字元</label>
         <Password
           class="textbox"
           id="password"
@@ -340,6 +340,12 @@ export default {
       if (this.password === "") {
         this.err.password = "請輸入密碼";
         count++;
+      } else if (this.password.length < 6) {
+        this.err.password = "密碼不得低於6字元";
+        count++;
+      } else if (this.password.length > 10) {
+        this.err.password = "密碼不得超過10字元";
+        count++;
       }
       if (this.passwordconfirm === "") {
         this.err.passwordconfirm = "請輸入密碼";
@@ -552,6 +558,7 @@ export default {
   font-size: 5px;
   height: 16px;
   width: 100%;
+  text-align: -webkit-left;
   // visibility: hidden;
 }
 .input-hander {
