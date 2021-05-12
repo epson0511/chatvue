@@ -24,6 +24,13 @@ export const connectSocket = (userinfo) => {
       store.commit("ws/setTotalCount", resData.count);
     }
 
+    if (resData.greeting == true) {
+      // console.log("登入的訊息");
+      // console.log(resData);
+    } else if (resData.greeting == false) {
+      // console.log("登出的訊息");
+      // console.log(resData);
+    }
     store.commit("ws/setMessageCollection", resData);
   };
 
@@ -46,4 +53,3 @@ export function forceColse() {
     socket.close();
   }
 }
-

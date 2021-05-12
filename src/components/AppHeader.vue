@@ -258,6 +258,16 @@ export default {
         //   icon: "pi pi-external-link",
         //   url: "https://vuejs.org/",
         // },
+
+        {
+          label: "個人頁面",
+          icon: "pi pi-id-card",
+          command: () => {
+            this.$router.push({
+              path: "/user/" + this.$store.state.ws.userKey,
+            });
+          },
+        },
         {
           label: "登出",
           icon: "pi pi-sign-out",
@@ -545,6 +555,7 @@ export default {
 .title-head {
   float: left;
   font-size: 2em;
+  cursor: pointer;
 }
 .p-field {
   margin-bottom: 0 !important;

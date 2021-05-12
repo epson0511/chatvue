@@ -138,11 +138,6 @@ export default {
       }
     },
     messageSize: function () {
-      console.log(
-        this.$store.state.ws.messageCollection[
-          this.$store.state.ws.messageCollection.length - 1
-        ]
-      );
       this.$nextTick(() => {
         const el = document.querySelector(".text-content");
         el.scrollTop = el.scrollHeight;
@@ -413,6 +408,9 @@ export default {
     if (this.$store.state.ws.messageCollection.length === 0) {
       this.initMsgHistory();
     }
+    if (this.$store.state.ws.rank > 1) {
+      this.openWsByToken();
+    }
   },
   mounted() {
     this.getuserlist();
@@ -594,6 +592,7 @@ export default {
   font-size: 0.1rem;
   text-align: end;
   color: darkgray;
+  align-self: center;
 }
 .text-group {
   /* margin-left: 1.7rem; */
