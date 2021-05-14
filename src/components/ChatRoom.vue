@@ -15,7 +15,18 @@
     <div class="pi pi-external-link popoutchat" @click="popchatroom">
       僅聊天
     </div>
-
+    <div class="zoomsize-group">
+      <div
+        class="pi pi-search-plus fontplus"
+        @click="fontPlus"
+        title="山村老花眼模式"
+      ></div>
+      <div
+        class="pi pi-search-minus fontminus"
+        @click="fontMinus"
+        title="年輕模式"
+      ></div>
+    </div>
     <!-- <router-view /> -->
   </div>
 
@@ -33,8 +44,16 @@
           v-bind:class="setMod(rank)"
           v-if="item.msgShow !== 0"
         >
-          <div class="text-group" v-if="item.greeting == null">
-            <span v-bind:class="getIcon(item)"></span
+          <div
+            class="text-group"
+            :style="{ fontSize: fontSize + 'rem' }"
+            v-if="item.greeting == null"
+            v-linkified
+          >
+            <span
+              v-bind:class="getIcon(item)"
+              :style="{ fontSize: fontSize + 'rem' }"
+            ></span
             ><span v-bind:class="getNameStyle(item)">{{ item.username }}</span
             >：{{ item.msg }}
           </div>
@@ -110,6 +129,7 @@ import Button from "primevue/button";
 import { connectSocket, sendText } from "../utils/api";
 import { uuid } from "../utils/tools.js";
 import axios from "axios";
+
 import { endpoint } from "../utils/endpoint.js";
 
 // import { endpoint } from "../utils/endpoint.js";
@@ -126,6 +146,7 @@ export default {
       messageSend: [],
       greeting: false,
       namestyle: "namestyle",
+      Size: 1.2,
     };
   },
   watch: {
@@ -173,6 +194,9 @@ export default {
     },
     onlineshow() {
       return "線上列表 (" + this.totalcount + ")";
+    },
+    fontSize() {
+      return this.Size;
     },
   },
   methods: {
@@ -255,7 +279,7 @@ export default {
       this.$nextTick(() => {
         const el = document.querySelector(".text-content");
         el.scrollTop = el.scrollHeight;
-        this.focusInput();
+        // this.focusInput();
       });
     },
     popchatroom() {
@@ -297,6 +321,12 @@ export default {
         memstyle9: false,
         memstyle10: false,
         memstyle11: false,
+        memstyle12: false,
+        memstyle13: false,
+        memstyle14: false,
+        memstyle15: false,
+        memstyle16: false,
+        memstyle17: false,
       };
 
       if (item.userLevel === 8 || item.level === 8) {
@@ -339,7 +369,7 @@ export default {
       return style;
     },
     idColorSelecter(userKey) {
-      let index = userKey % 12;
+      let index = userKey % 18;
       return "memstyle" + index;
     },
     setMod(rank) {
@@ -352,10 +382,10 @@ export default {
       return style;
     },
     compare(a, b) {
-      if (a.userLevel < b.userLevel) {
+      if (a.level > b.level) {
         return -1;
       }
-      if (a.userLevel > b.userLevel) {
+      if (a.level < b.level) {
         return 1;
       }
       return 0;
@@ -398,7 +428,18 @@ export default {
         this.$store.commit("ws/setMessageCollection", item)
       );
     },
+    fontPlus() {
+      if (this.Size < 2) {
+        this.Size += 0.1;
+      }
+    },
+    fontMinus() {
+      if (this.Size > 0.5) {
+        this.Size -= 0.1;
+      }
+    },
   },
+
   components: {
     InputText,
     Button,
@@ -408,7 +449,10 @@ export default {
     if (this.$store.state.ws.messageCollection.length === 0) {
       this.initMsgHistory();
     }
-    if (this.$store.state.ws.rank > 1) {
+    if (
+      this.$store.state.ws.rank > 1 &&
+      this.$store.state.statecenter.wsStatus != 1
+    ) {
       this.openWsByToken();
     }
   },
@@ -477,7 +521,7 @@ export default {
   /* top: 60px;
   padding-left: 0 !important; */
   display: grid;
-  grid-template-columns: 6rem 8.5rem 1fr;
+  grid-template-columns: 6rem 8.5rem 1fr 2rem;
 }
 .text-head .p-button-text {
   padding: 0rem 0.3rem;
@@ -489,7 +533,7 @@ export default {
 }
 .dialog {
   margin: 0;
-  padding: 0.4rem;
+  padding: 0.3rem;
   text-align: left;
   display: grid;
   grid-template-columns: 1fr 3rem;
@@ -531,9 +575,7 @@ export default {
   overflow: hidden;
   justify-content: center;
 }
-.roommenutab {
-  /* display: flex; */
-}
+
 .namestyle {
   font-weight: bolder !important;
 }
@@ -579,6 +621,38 @@ export default {
 .memstyle11 {
   color: crimson;
 }
+.memstyle12 {
+  color: orangered;
+}
+.memstyle13 {
+  color: midnightblue;
+}
+.memstyle14 {
+  color: dimgray;
+}
+.memstyle15 {
+  color: forestgreen;
+}
+.memstyle16 {
+  color: mediumblue;
+}
+.memstyle17 {
+  color: orchid;
+}
+.memstyleSP {
+  background-image: linear-gradient(
+    to left,
+    violet,
+    indigo,
+    blue,
+    green,
+    yellow,
+    orange,
+    red
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
 .iconImg {
   /* position: absolute; */
   margin-top: -0.3rem;
@@ -597,5 +671,14 @@ export default {
 .text-group {
   /* margin-left: 1.7rem; */
   word-break: break-all;
+}
+.zoomsize-group {
+  display: grid;
+  color: gray;
+  background-color: cornsilk;
+}
+.fontplus,
+.fontminus {
+  align-self: center;
 }
 </style>

@@ -13,6 +13,7 @@ export const connectSocket = (userinfo) => {
 
   socket.onopen = function() {
     socket.send(userinfo);
+    store.commit("statecenter/setWsStatus", socket.readyState);
   };
 
   socket.onmessage = function(e) {
@@ -35,6 +36,7 @@ export const connectSocket = (userinfo) => {
   };
 
   socket.onclose = function(e) {
+    store.commit("statecenter/setWsStatus", socket.readyState);
     console.log("連線關閉: " + e);
   };
 

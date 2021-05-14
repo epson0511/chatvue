@@ -1,7 +1,8 @@
 export const state = {
     loginbox: false,
     token: localStorage.getItem("token"),
-    channelURL:'',
+    channelURL:localStorage.getItem("channel"),
+    wsStatus:0,
   };
   export const actions = {};
   
@@ -14,6 +15,9 @@ export const state = {
     },
     setChannelURL(state, payload) {
       state.channelURL = payload;
+    },
+    setWsStatus(state, payload) {
+      state.wsStatus = payload;
     },
   };
   export const getters = {};

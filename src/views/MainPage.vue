@@ -39,7 +39,7 @@ export default {
   data() {
     return {
       componentKey: 0,
-      museActive: true,
+      museActive: false,
       museytActive: false,
       affActive: false,
       fc2Active: false,
@@ -93,6 +93,11 @@ export default {
         "https://player.twitch.tv/?channel=muse_tw&muted=false&autoplay=true&parent=" +
           location.host.split(":")[0]
       );
+      localStorage.setItem(
+        "channel",
+        "https://player.twitch.tv/?channel=muse_tw&muted=false&autoplay=true&parent=" +
+          location.host.split(":")[0]
+      );
     },
     to_museyt: function () {
       this.museActive = false;
@@ -101,7 +106,11 @@ export default {
       this.fc2Active = false;
       this.$store.commit(
         "statecenter/setChannelURL",
-        "https://www.youtube.com/embed/BFjZFdd_gmQ"
+        "https://www.youtube.com/watch?v=g4VsBph9cTQ"
+      );
+      localStorage.setItem(
+        "channel",
+        "https://www.youtube.com/watch?v=g4VsBph9cTQ"
       );
     },
     to_aff: function () {
@@ -113,6 +122,10 @@ export default {
         "statecenter/setChannelURL",
         "https://play.afreecatv.com/kalelujp/232923384/embed"
       );
+      localStorage.setItem(
+        "channel",
+        "https://play.afreecatv.com/kalelujp/232923384/embed"
+      );
     },
     to_fc2: function () {
       this.museActive = false;
@@ -121,6 +134,10 @@ export default {
       this.fc2Active = true;
       this.$store.commit(
         "statecenter/setChannelURL",
+        "https://live.fc2.com/embedPlayer/?id=64589205&lang=tw&suggest=1&thumbnail=1&adultaccess=1"
+      );
+      localStorage.setItem(
+        "channel",
         "https://live.fc2.com/embedPlayer/?id=64589205&lang=tw&suggest=1&thumbnail=1&adultaccess=1"
       );
     },

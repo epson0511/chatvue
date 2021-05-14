@@ -29,11 +29,16 @@ export default {
     },
   },
   mounted() {
-    this.$store.commit(
-      "statecenter/setChannelURL",
-      "https://player.twitch.tv/?channel=muse_tw&muted=false&autoplay=true&parent=" +
-        location.host.split(":")[0]
-    );
+    if (
+      this.$store.state.statecenter.channelURL == null ||
+      this.$store.state.statecenter.channelURL == ""
+    ) {
+      this.$store.commit(
+        "statecenter/setChannelURL",
+        "https://player.twitch.tv/?channel=muse_tw&muted=false&autoplay=true&parent=" +
+          location.host.split(":")[0]
+      );
+    }
   },
   methods: {},
 };

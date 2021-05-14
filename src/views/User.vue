@@ -13,7 +13,7 @@
             style="height: 15rem"
           />
           <div>
-            <Button icon="pi pi-image" label="變更圖片" />
+            <Button icon="pi pi-image" label="變更圖片" @click="openUpload" />
           </div>
         </template>
         <template #title>
@@ -42,6 +42,7 @@
             ><span class="column">{{ lastdate }}</span>
           </p>
         </template>
+
         <template #footer>
           <!-- <Button icon="pi pi-check" label="Save" />
           <Button
@@ -54,11 +55,34 @@
       </Card>
     </div>
   </div>
+
+  <Dialog v-model:visible="uploadModal">
+    <template #header>
+      <h3>選取圖片</h3>
+    </template>
+
+    <FileUpload
+      name="demo[]"
+      url="./upload"
+      accept="image/*"
+      fileLimit="1"
+      chooseLabel="選擇"
+      uploadLabel="上傳"
+      :showCancelButton="false"
+      previewWidth="200"
+    >
+      <template #empty>
+        <p>請按鈕選擇或拖曳一張圖片到此</p>
+      </template>
+    </FileUpload>
+  </Dialog>
 </template>
 <script>
 import QuickLink from "@/components/QuickLink.vue";
 import Card from "primevue/card";
 import Button from "primevue/button";
+import Dialog from "primevue/dialog";
+import FileUpload from "primevue/fileupload";
 import axios from "axios";
 import { endpoint } from "../utils/endpoint.js";
 
@@ -72,6 +96,7 @@ export default {
       status: "",
       createdate: "",
       lastdate: "",
+      uploadModal: false,
     };
   },
   computed: {
@@ -109,7 +134,7 @@ export default {
       this.lastdate = new Date(data.lastdate).toLocaleString();
       if (data.level === 9) {
         this.level = "站長";
-      } else if (data.level === 9) {
+      } else if (data.level === 8) {
         this.level = "管理員";
       } else if (data.level === 4) {
         this.level = "元老會員";
@@ -119,11 +144,16 @@ export default {
         this.level = "會員";
       }
     },
+    openUpload() {
+      this.uploadModal = true;
+    },
   },
   components: {
     QuickLink,
     Card,
     Button,
+    Dialog,
+    FileUpload,
   },
   beforeMount() {
     this.userinfo();
@@ -182,5 +212,9 @@ export default {
     padding-left: 25%;
     padding-right: 25%;
   }
+  .p-fileupload-row > div:nth-child(2){
+      display: none;
+  }
+
 }
 </style>
