@@ -7,6 +7,7 @@ export const state = {
   totalcount: 0,
   messageCollection: [],
   userlist: [],
+  userpic: "",
 };
 export const actions = {};
 
@@ -30,18 +31,21 @@ export const mutations = {
     // console.table(state.messageCollection);
     // console.log("ws-payload:" + JSON.stringify(payload));
     if (payload.msgShow != 1) {
-        // state.messageCollection=state.messageCollection.filter(m => m.msgHash !== payload.msgHash);
-        state.messageCollection.forEach(item => {
-            if(item.msgHash === payload.msgHash){
-                item.msgShow = 0;
-            }
-        });
+      // state.messageCollection=state.messageCollection.filter(m => m.msgHash !== payload.msgHash);
+      state.messageCollection.forEach((item) => {
+        if (item.msgHash === payload.msgHash) {
+          item.msgShow = 0;
+        }
+      });
     } else {
       state.messageCollection.push(payload);
     }
   },
   setTotalCount(state, payload) {
     state.totalcount = payload;
+  },
+  setUserPic(state, payload) {
+    state.userpic = payload;
   },
   setUserList(state, payload) {
     state.userlist.push(payload);

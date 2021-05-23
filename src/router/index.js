@@ -11,7 +11,7 @@ const routes = [
     name: "Home",
     component: Home,
     meta: {
-      title: "米花巴庫蛋(Alpha) - 首頁",
+      title: "米花愛普森直播 - 首頁",
     },
   },
   {
@@ -19,7 +19,7 @@ const routes = [
     name: "Chatroom",
     component: Chatroom,
     meta: {
-      title: "米花巴庫蛋(Alpha) - 聊天室",
+      title: "米花愛普森直播 - 聊天室",
     },
   },
   {
@@ -36,7 +36,7 @@ const routes = [
     name: "user",
     component: User,
     meta: {
-      title: "米花巴庫蛋(Alpha) - 使用者頁面",
+      title: "米花愛普森直播 - 使用者頁面",
     },
   },
   {
@@ -44,7 +44,7 @@ const routes = [
     name: "mainpage",
     component: MainPage,
     meta: {
-      title: "米花巴庫蛋(Alpha) - 直播間",
+      title: "米花愛普森直播 - 直播間",
     },
   },
 ];

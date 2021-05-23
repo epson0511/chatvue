@@ -71,7 +71,7 @@
         <span id="email-help" class="p-error err-hander">{{ err.email }}</span>
       </div>
       <div class="p-field p-col-12">
-        <label class="input-hander" for="password">密碼 - 需介於6-10字元</label>
+        <label class="input-hander" for="password">密碼 - 需介於6-20字元</label>
         <Password
           class="textbox"
           id="password"
@@ -353,8 +353,8 @@ export default {
       } else if (this.password.length < 6) {
         this.err.password = "密碼不得低於6字元";
         count++;
-      } else if (this.password.length > 10) {
-        this.err.password = "密碼不得超過10字元";
+      } else if (this.password.length > 20) {
+        this.err.password = "密碼不得超過20字元";
         count++;
       }
       if (this.passwordconfirm === "") {
@@ -493,6 +493,7 @@ export default {
         this.$store.commit("ws/setUserkey", data.id);
         this.$store.commit("ws/setUsername", data.name);
         this.$store.commit("ws/setRank", data.level);
+        this.$store.commit("ws/setUserPic", data.userpic);
       } catch (error) {
         console.log(error.message);
         this.$store.commit("statecenter/setToken", null);
@@ -512,7 +513,7 @@ export default {
       this.$refs.menu.toggle(event);
     },
   },
-  mounted() {
+  beforeMount() {
     this.checkUser();
   },
 

@@ -35,8 +35,7 @@ export default {
     ) {
       this.$store.commit(
         "statecenter/setChannelURL",
-        "https://player.twitch.tv/?channel=muse_tw&muted=false&autoplay=true&parent=" +
-          location.host.split(":")[0]
+        process.env.VUE_APP_VIDEO_OK + "?nochat=1&autoplay=1"
       );
     }
   },

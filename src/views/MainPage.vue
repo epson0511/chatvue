@@ -3,21 +3,50 @@
     <div class="media-body">
       <div class="channel-switcher">
         <Button
-          v-bind:class="museActive ? active : notactive"
+          v-bind:class="museActive ? out_active : out_notactive"
           @click="to_musetw"
-          >木棉圖</Button
-        >
+          >木棉花
+        </Button>
         <Button
-          v-bind:class="museytActive ? active : notactive"
-          @click="to_museyt"
-          >木棉油</Button
+          v-bind:class="huya_chunhua_Active ? out_active : out_notactive"
+          @click="huya_chunhua"
         >
-        <Button v-bind:class="affActive ? active : notactive" @click="to_aff"
-          >柯南主</Button
+          小當家
+        </Button>
+        <Button
+          v-bind:class="huya_tennis_Active ? out_active : out_notactive"
+          @click="huya_tennis"
+          style="font-size: 1rem; padding: 0rem 0.5rem"
         >
-        <Button v-bind:class="fc2Active ? active : notactive" @click="to_fc2"
-          >柯南副</Button
+          網球王子
+        </Button>
+        <Button
+          v-bind:class="huya_labi_Active ? out_active : out_notactive"
+          @click="huya_labi"
+          style="font-size: 1rem; padding: 0rem 0.5rem"
         >
+          蠟筆小新
+        </Button>
+        <Button
+          id="btnMin"
+          v-bind:class="okActive ? active : notactive"
+          @click="to_ok"
+        >
+          主頻道
+        </Button>
+        <Button
+          id="btnSub"
+          v-bind:class="fc2Active ? active : notactive"
+          @click="to_fc2"
+        >
+          副頻道
+        </Button>
+        <Button
+          v-bind:class="musicActive ? active_danger : notactive_danger"
+          @click="to_music"
+        >
+          音樂台
+        </Button>
       </div>
       <MediaRoom :key="componentKey"></MediaRoom>
     </div>
@@ -40,9 +69,12 @@ export default {
     return {
       componentKey: 0,
       museActive: false,
-      museytActive: false,
-      affActive: false,
+      huya_chunhua_Active: false,
+      huya_tennis_Active: false,
+      huya_labi_Active: false,
+      okActive: false,
       fc2Active: false,
+      musicActive: false,
 
       active: {
         ["p-button-outlined"]: false,
@@ -51,6 +83,22 @@ export default {
       notactive: {
         ["p-button-outlined"]: true,
         ["p-button-help"]: true,
+      },
+      out_active: {
+        ["p-button-outlined"]: false,
+        ["p-button-secondary"]: true,
+      },
+      out_notactive: {
+        ["p-button-outlined"]: true,
+        ["p-button-secondary"]: true,
+      },
+      active_danger: {
+        ["p-button-outlined"]: false,
+        ["p-button-danger"]: true,
+      },
+      notactive_danger: {
+        ["p-button-outlined"]: true,
+        ["p-button-danger"]: true,
       },
     };
   },
@@ -78,67 +126,129 @@ export default {
     MediaRoom,
     Button,
   },
+  mounted() {},
   methods: {
     forceRerender() {
       this.componentKey += 1;
     },
-
     to_musetw: function () {
       this.museActive = true;
-      this.museytActive = false;
-      this.affActive = false;
+      this.huya_chunhua_Active = false;
+      this.huya_tennis_Active = false;
+      this.huya_labi_Active = false;
+      this.okActive = false;
       this.fc2Active = false;
+      this.musicActive = false;
       this.$store.commit(
         "statecenter/setChannelURL",
-        "https://player.twitch.tv/?channel=muse_tw&muted=false&autoplay=true&parent=" +
+        process.env.VUE_APP_VIDEO_MUSETW +
+          "&muted=false&autoplay=true&parent=" +
           location.host.split(":")[0]
       );
       localStorage.setItem(
         "channel",
-        "https://player.twitch.tv/?channel=muse_tw&muted=false&autoplay=true&parent=" +
+        process.env.VUE_APP_VIDEO_MUSETW +
+          "&muted=false&autoplay=true&parent=" +
           location.host.split(":")[0]
       );
     },
-    to_museyt: function () {
+    huya_chunhua: function () {
       this.museActive = false;
-      this.museytActive = true;
-      this.affActive = false;
+      this.huya_chunhua_Active = true;
+      this.huya_tennis_Active = false;
+      this.huya_labi_Active = false;
+      this.okActive = false;
       this.fc2Active = false;
+      this.musicActive = false;
       this.$store.commit(
         "statecenter/setChannelURL",
-        "https://www.youtube.com/watch?v=g4VsBph9cTQ"
+        process.env.VUE_APP_VIDEO_HUYA_CHUNHUA
       );
-      localStorage.setItem(
-        "channel",
-        "https://www.youtube.com/watch?v=g4VsBph9cTQ"
-      );
+      localStorage.setItem("channel", process.env.VUE_APP_VIDEO_HUYA_CHUNHUA);
     },
-    to_aff: function () {
+    huya_tennis: function () {
       this.museActive = false;
-      this.museytActive = false;
-      this.affActive = true;
+      this.huya_chunhua_Active = false;
+      this.huya_tennis_Active = true;
+      this.huya_labi_Active = false;
+      this.okActive = false;
       this.fc2Active = false;
+      this.musicActive = false;
       this.$store.commit(
         "statecenter/setChannelURL",
-        "https://play.afreecatv.com/kalelujp/232923384/embed"
+        process.env.VUE_APP_VIDEO_HUYA_TENNIS
+      );
+      localStorage.setItem("channel", process.env.VUE_APP_VIDEO_HUYA_TENNIS);
+    },
+    huya_labi: function () {
+      this.museActive = false;
+      this.huya_chunhua_Active = false;
+      this.huya_tennis_Active = false;
+      this.huya_labi_Active = true;
+      this.okActive = false;
+      this.fc2Active = false;
+      this.musicActive = false;
+      this.$store.commit(
+        "statecenter/setChannelURL",
+        process.env.VUE_APP_VIDEO_HUYA_LABI
+      );
+      localStorage.setItem("channel", process.env.VUE_APP_VIDEO_HUYA_LABI);
+    },
+    to_ok: function () {
+      this.museActive = false;
+      this.huya_chunhua_Active = false;
+      this.huya_tennis_Active = false;
+      this.huya_labi_Active = false;
+      this.okActive = true;
+      this.fc2Active = false;
+      this.musicActive = false;
+      this.$store.commit(
+        "statecenter/setChannelURL",
+        process.env.VUE_APP_VIDEO_OK + "?nochat=1&autoplay=1"
       );
       localStorage.setItem(
         "channel",
-        "https://play.afreecatv.com/kalelujp/232923384/embed"
+        process.env.VUE_APP_VIDEO_OK + "?nochat=1&autoplay=1"
       );
     },
     to_fc2: function () {
       this.museActive = false;
-      this.museytActive = false;
-      this.affActive = false;
+      this.huya_chunhua_Active = false;
+      this.huya_tennis_Active = false;
+      this.huya_labi_Active = false;
+      this.okActive = false;
       this.fc2Active = true;
+      this.musicActive = false;
       this.$store.commit(
         "statecenter/setChannelURL",
-        "https://live.fc2.com/embedPlayer/?id=64589205&lang=tw&suggest=1&thumbnail=1&adultaccess=1"
+        process.env.VUE_APP_VIDEO_FC2 +
+          "&lang=tw&suggest=1&thumbnail=1&adultaccess=1"
       );
       localStorage.setItem(
         "channel",
-        "https://live.fc2.com/embedPlayer/?id=64589205&lang=tw&suggest=1&thumbnail=1&adultaccess=1"
+        process.env.VUE_APP_VIDEO_FC2 +
+          "&lang=tw&suggest=1&thumbnail=1&adultaccess=1"
+      );
+    },
+    to_music: function () {
+      this.museActive = false;
+      this.huya_chunhua_Active = false;
+      this.huya_tennis_Active = false;
+      this.huya_labi_Active = false;
+      this.okActive = false;
+      this.fc2Active = false;
+      this.musicActive = true;
+      this.$store.commit(
+        "statecenter/setChannelURL",
+        process.env.VUE_APP_VIDEO_MUSIC +
+          "&muted=false&autoplay=true&parent=" +
+          location.host.split(":")[0]
+      );
+      localStorage.setItem(
+        "channel",
+        process.env.VUE_APP_VIDEO_MUSIC +
+          "&muted=false&autoplay=true&parent=" +
+          location.host.split(":")[0]
       );
     },
   },
@@ -149,13 +259,20 @@ export default {
   display: grid;
   grid-template-columns: 80% 20%;
 }
+@media (max-aspect-ratio: 3/2) {
+  .main {
+    grid-template-columns: 70% 30%;
+  }
+}
 @media screen and (max-width: 900px) {
   .main {
     grid-template-columns: none;
     grid-template-rows: 200px 1fr;
   }
 }
-
+.text-head {
+  grid-template-columns: 6rem 8.5rem 1fr;
+}
 .channel-switcher {
   display: grid;
   display: none;

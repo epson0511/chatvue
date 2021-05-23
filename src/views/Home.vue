@@ -46,6 +46,17 @@
         </Panel>
         <br />
         <Panel header="開發日誌">
+          <div>● 2021.05.23 (alpha-2.6)</div>
+          <p style="margin-left: 7%">
+            1. 個人圖片上傳功能(1.5MB)<br />
+            2. 聊天室使用者名稱可以點進個人頁面<br />
+            3. 密碼上限改為20字元<br />
+          </p>
+          <div>● 2021.05.21 (alpha-2.5)</div>
+          <p style="margin-left: 7%">
+            1. 調整聊天室功能列表<br />
+            2. 修正打一堆"..."造成跑版的問題<br />
+          </p>
           <div>● 2021.05.13</div>
           <p style="margin-left: 7%">
             1. 修正發言重複顯示的問題<br />
