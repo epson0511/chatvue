@@ -520,7 +520,7 @@ export default {
       }
     },
     to_userinfo(item) {
-      if (item.userLevel > 2) {
+      if (item.userLevel >= 2) {
         this.$router.push({
           path: "/user/" + item.userKey,
         });
