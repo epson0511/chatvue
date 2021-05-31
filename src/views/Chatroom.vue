@@ -56,4 +56,5 @@ export default {
   grid-template-rows: 48px 1fr 55px;
   height: calc(100vh - 90px);
 }
+
 </style>

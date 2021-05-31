@@ -3,6 +3,8 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 import PrimeVue from "primevue/config";
+import ToastService from 'primevue/toastservice';
+
 // import Dialog from 'primevue/dialog';
 
 import "primevue/resources/themes/saga-blue/theme.css";
@@ -16,6 +18,7 @@ const app = createApp(App);
 
 app.use(store).use(router);
 app.use(PrimeVue).directive("linkified", linkify);
+app.use(ToastService);
 // app.provide('$axios', axios);
 // app.component('Dialog', Dialog);
 

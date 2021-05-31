@@ -269,6 +269,18 @@ export default {
     grid-template-columns: none;
     grid-template-rows: 200px 1fr;
   }
+  .container_for_main .chat-body {
+    height: calc(100vh - 270px) !important;
+  }
+  .main .text-body {
+    /* z-index: 1; */
+    max-height: calc(100vh - 375px);
+  }
+  .main .text-content{
+    height: calc(100vh - 376px);
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch
+  }
 }
 .text-head {
   grid-template-columns: 6rem 8.5rem 1fr;
@@ -291,5 +303,18 @@ export default {
 }
 .container_for_main .list-body {
   max-height: calc(100vh - 175px);
+}
+.p-toast .p-toast-message .p-toast-message-content .p-toast-message-icon {
+  display: none;
+}
+.p-toast-top-center {
+  /* top: 118px !important;
+  width: 20% !important;
+  left: 80% !important;
+  margin-left: 0rem !important; */
+  /* top: 118px ; */
+  /* width: 20% ;
+  left: 80% ;
+  margin-left: 0rem ; */
 }
 </style>

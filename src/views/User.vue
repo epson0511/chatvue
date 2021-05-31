@@ -350,12 +350,12 @@ export default {
 }
 .cardarea {
   margin-top: 3%;
-  width: 70%;
+  width: 90%;
 }
 
 .cardarea .userimg {
-  width: 200px !important;
-  height: 200px !important;
+  width: 250px !important;
+  height: 250px !important;
   margin: 5% 3% 3% 3%;
   object-fit: cover;
   height: 15rem;
@@ -372,6 +372,8 @@ export default {
 .userinfobox {
   display: grid;
   grid-template-columns: 30% 70%;
+  margin-left: 10%;
+  margin-right: 10%;
 }
 .userinfobox .column-name {
   text-align-last: justify;
@@ -381,11 +383,13 @@ export default {
 .userinfobox .column {
   text-align: -webkit-left;
   padding-left: 5%;
+  word-break: break-word;
 }
 @media screen and (min-width: 900px) {
   .cardarea {
     display: grid;
     grid-template-columns: 30% 70%;
+    width: 1000px;
   }
   .cardarea .userimg {
     margin: 25% 3% 10% 3% !important;
@@ -396,8 +400,8 @@ export default {
   }
 }
 .p-fileupload-row > div:nth-child(1) > img:nth-child(1) {
-  width: 200px !important;
-  height: 200px !important;
+  width: 250px !important;
+  height: 250px !important;
   object-fit: cover;
 }
 .p-fileupload-row > div:nth-child(2) {

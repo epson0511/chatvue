@@ -24,10 +24,8 @@ export const connectSocket = (userinfo) => {
     if (resData.count) {
       store.commit("ws/setTotalCount", resData.count);
     }
-
     if (resData.greeting == true) {
-      // console.log("登入的訊息");
-      // console.log(resData);
+      store.commit("ws/setLoginCollection", resData);
     } else if (resData.greeting == false) {
       // console.log("登出的訊息");
       // console.log(resData);

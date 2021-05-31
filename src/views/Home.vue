@@ -20,13 +20,11 @@
         </Panel>
         <br />
         <Panel header="待開發">
-          <p>1. 個人資料頁面編輯</p>
-          <p>2. 頭像上傳與頭像顯示</p>
-          <p>3. 貼圖</p>
-          <p>4. 人物認領或tag稱號之類的東西</p>
-          <p>5. 吉祥物設計</p>
-          <p>6. 自動從YT點播影片功能</p>
-          <p>7. 想到再繼續寫</p>
+          <p>1. 個人資料頁面編輯 (in process)</p>
+          <p>2. 人物認領或tag稱號之類的東西</p>
+          <p>3. 吉祥物設計</p>
+          <p>4. 自動從YT點播影片功能</p>
+          <p>5. 想到再繼續寫</p>
           <a
             target="_blank"
             href="https://docs.google.com/forms/d/1jHpJMbouZ_thJBV0gPoHE3Xq9YmFNqMtKTh6QwcQy70"
@@ -46,6 +44,17 @@
         </Panel>
         <br />
         <Panel header="開發日誌">
+          <div>● 2021.05.31 (alpha-2.8)</div>
+          <p style="margin-left: 7%">
+            1. 貼圖功能<br />
+            2. 僅聊天頁之登入推播樣式更改為全版<br />
+          </p>
+          <div>● 2021.05.26 (alpha-2.7)</div>
+          <p style="margin-left: 7%">
+            1. 允許同帳號多重登入<br />
+            2. 線上列表顯示頭貼<br />
+            3. 進入聊天室推播通知<br />
+          </p>
           <div>● 2021.05.23 (alpha-2.6)</div>
           <p style="margin-left: 7%">
             1. 個人圖片上傳功能(1.5MB)<br />
@@ -87,6 +96,16 @@ export default {
     QuickLink,
     Panel,
   },
+  mounted() {
+    this.$toast.add({
+      severity: "warn",
+      // summary: "登入",
+      detail: " 進入聊天室！",
+      closable: false,
+      group: "chatroom_greeting",
+      life: 40000,
+    });
+  },
 };
 </script>
 <style>
@@ -101,6 +120,7 @@ export default {
   z-index: 1;
   max-height: calc(94vh - 190px);
   overflow: overlay;
+  -webkit-overflow-scrolling: touch;
 }
 .text-area {
   margin-left: 7%;

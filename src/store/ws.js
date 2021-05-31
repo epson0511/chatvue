@@ -6,6 +6,7 @@ export const state = {
   rank: 0,
   totalcount: 0,
   messageCollection: [],
+  loginCollection: [],
   userlist: [],
   userpic: "",
 };
@@ -40,6 +41,10 @@ export const mutations = {
     } else {
       state.messageCollection.push(payload);
     }
+  },
+  setLoginCollection(state, payload) {
+    // console.log(payload)
+    state.loginCollection.push(payload);
   },
   setTotalCount(state, payload) {
     state.totalcount = payload;

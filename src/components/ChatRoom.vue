@@ -25,8 +25,28 @@
   <div class="text-body">
     <div class="list-body" v-if="isuserlist">
       <div class="list-item" v-for="item in userlist" :key="item">
-        <span v-bind:class="getIcon(item)"></span
-        ><span v-bind:class="getNameStyle(item)">{{ item.name }}</span>
+        <img
+          v-if="item.userpic == null || item.userpic == ''"
+          class="chatroom_userimg"
+          v-bind:src="require(`@/static/image/${getDefaultImg(item.userKey)}`)"
+          style="height: 15rem"
+        />
+        <img
+          v-else
+          class="chatroom_userimg"
+          v-bind:src="'data:image/png;base64,' + item.userpic"
+          style="height: 15rem"
+        />
+        <div class="namearea-group-list">
+          <div v-bind:class="getIcon(item)"></div>
+          <div
+            v-bind:class="getNameStyle(item)"
+            class="nameOnly"
+            @click="to_userinfo(item)"
+          >
+            {{ item.name }}
+          </div>
+        </div>
       </div>
     </div>
     <div class="text-content" v-else>
@@ -69,7 +89,29 @@
               </div>
               <span class="namestyle">：</span>
             </div>
-            <span class="chatroom_usermsg" v-linkified>
+            <div
+              class="chatroom_usermsg"
+              v-linkified
+              v-if="isSticker(item.msg)"
+            >
+              <img
+                class="sticker-item-show"
+                v-bind:src="
+                  require(`@/static/sticker/${getStickerToShow(item.msg)}`)
+                "
+              />
+            </div>
+            <span
+              class="chatroom_usermsg"
+              v-linkified
+              v-else-if="isFace(item.msg)"
+            >
+              <img
+                class="face-item-show"
+                v-bind:src="require(`@/static/face/${getFaceToShow(item.msg)}`)"
+              />
+            </span>
+            <span class="chatroom_usermsg" v-linkified v-else>
               {{ item.msg }}
             </span>
           </div>
@@ -81,8 +123,330 @@
   </div>
   <div v-if="!isuserlist">
     <div v-if="rank !== 0" class="p-col-12 input-body">
-      <div class="pi pi-microsoft btnSticker"></div>
-      <div class="pi pi-comment btnFace"></div>
+      <OverlayPanel ref="stickerbody" :style="{ width: '22.5rem' }">
+        <Card class="sticker-container">
+          <template #header>
+            <!-- <img alt="user header" src="demo/images/usercard.png" /> -->
+            <div class="sticker-header">
+              <div class="p-field-checkbox">
+                <Checkbox
+                  id="sticker-checker"
+                  name="stikcer"
+                  value="stikcer"
+                  v-model="sticker.stickerType"
+                />
+                <label for="sticker-checker">貼圖</label>
+              </div>
+              <div class="p-field-checkbox">
+                <Checkbox
+                  id="face-checker"
+                  name="stikcer"
+                  value="face"
+                  v-model="sticker.stickerType"
+                />
+                <label for="face-checker">表情</label>
+              </div>
+              <div class="p-field-checkbox">
+                <Checkbox
+                  id="facetext-checker"
+                  name="stikcer"
+                  value="facetext"
+                  v-model="sticker.stickerType"
+                />
+                <label for="facetext-checker">文字</label>
+              </div>
+            </div>
+          </template>
+          <!-- <template #title>貼圖名</template> -->
+          <template #content>
+            <div
+              class="sticker-area"
+              v-if="
+                this.sticker.stickerData.group == 'sticker' &&
+                this.sticker.stickerData.key == 'conan'
+              "
+            >
+              <img
+                class="sticker-item"
+                v-for="index in 62"
+                :key="index"
+                v-bind:src="require(`@/static/sticker/conan/${index}.png`)"
+                @click="sticker_send('sticker', 'conan', 'png', `${index}`)"
+              />
+              <img
+                class="sticker-item"
+                src="@/static/sticker/conan/1.gif"
+                @click="sticker_send('sticker', 'conan', 'gif', 1)"
+              />
+              <!-- <img class="sticker-item" src="@/static/image/blank.png" /> -->
+            </div>
+            <div
+              class="sticker-area"
+              v-else-if="
+                this.sticker.stickerData.group == 'sticker' &&
+                this.sticker.stickerData.key == 'hikari'
+              "
+            >
+              <img
+                class="sticker-item"
+                v-for="index in 5"
+                :key="index"
+                v-bind:src="require(`@/static/sticker/hikari/${index}.png`)"
+                @click="sticker_send('sticker', 'hikari', 'png', `${index}`)"
+              />
+              <img
+                class="sticker-item"
+                src="@/static/sticker/hikari/1.gif"
+                @click="sticker_send('sticker', 'hikari', 'gif', 1)"
+              />
+            </div>
+            <div
+              class="sticker-area"
+              v-else-if="
+                this.sticker.stickerData.group == 'sticker' &&
+                this.sticker.stickerData.key == 'chuka'
+              "
+            >
+              <img
+                class="sticker-item"
+                v-for="index in 2"
+                :key="index"
+                v-bind:src="require(`@/static/sticker/chuka/${index}.png`)"
+                @click="sticker_send('sticker', 'chuka', 'png', `${index}`)"
+              />
+            </div>
+            <div
+              class="sticker-area"
+              v-else-if="
+                this.sticker.stickerData.group == 'sticker' &&
+                this.sticker.stickerData.key == 'hunter'
+              "
+            >
+              <img
+                class="sticker-item"
+                v-for="index in 1"
+                :key="index"
+                v-bind:src="require(`@/static/sticker/hunter/${index}.png`)"
+                @click="sticker_send('sticker', 'hunter', 'png', `${index}`)"
+              />
+            </div>
+            <div
+              class="sticker-area"
+              v-else-if="
+                this.sticker.stickerData.group == 'sticker' &&
+                this.sticker.stickerData.key == 'other'
+              "
+            >
+              <img
+                class="sticker-item"
+                v-for="index in 9"
+                :key="index"
+                v-bind:src="require(`@/static/sticker/other/${index}.png`)"
+                @click="sticker_send('sticker', 'other', 'png', `${index}`)"
+              />
+              <!-- <img class="sticker-item" src="@/static/image/blank.png" /> -->
+            </div>
+            <div
+              class="sticker-area"
+              v-else-if="
+                this.sticker.stickerData.group == 'sticker' &&
+                this.sticker.stickerData.key == 'recent'
+              "
+            >
+              <img
+                class="sticker-item"
+                v-for="item in recentStickerReverse"
+                :key="item"
+                v-bind:src="require(`@/static/sticker/${item}`)"
+                @click="sticker_recent_send('sticker', `${item}`)"
+              />
+              <!-- <img class="sticker-item" src="@/static/image/blank.png" /> -->
+            </div>
+            <div
+              class="sticker-area"
+              v-else-if="
+                this.sticker.stickerData.group == 'face' &&
+                this.sticker.stickerData.key == 'other'
+              "
+            >
+              <img
+                class="face-item"
+                v-for="index in 3"
+                :key="index"
+                v-bind:src="require(`@/static/face/other/${index}.png`)"
+                @click="sticker_send('face', 'other', 'png', `${index}`)"
+              />
+              <!-- <img class="face-item" src="@/static/image/blank.png" /> -->
+            </div>
+            <div
+              class="sticker-area"
+              v-else-if="
+                this.sticker.stickerData.group == 'facetext' &&
+                this.sticker.stickerData.key == 'one'
+              "
+            >
+              <Button
+                class="p-button p-component p-button-raised p-button-help p-button-text facetext-item"
+                v-for="item in facetext.one"
+                :key="item"
+                v-bind:label="item"
+                @click="facetext_append(item)"
+              />
+            </div>
+            <div
+              class="sticker-area"
+              v-else-if="
+                this.sticker.stickerData.group == 'facetext' &&
+                this.sticker.stickerData.key == 'two'
+              "
+            >
+              <Button
+                class="p-button p-component p-button-raised p-button-help p-button-text facetext-item-long"
+                v-for="item in facetext.two"
+                :key="item"
+                v-bind:label="item"
+                @click="facetext_append(item)"
+              />
+            </div>
+            <div class="sticker-area" v-else>
+              <!-- <img class="sticker-item" src="@/static/image/blank.png" /> -->
+              <!-- <img class="sticker-item" src="@/static/image/blank.png" /> -->
+            </div>
+          </template>
+          <template #footer>
+            <div class="sticker-switcher">
+              <div
+                class="pi pi-clock sticker-recent-icon"
+                v-bind:class="
+                  ActiveStickerIcon(
+                    'sticker',
+                    'recent',
+                    sticker.stickerData.group,
+                    sticker.stickerData.key
+                  )
+                "
+                @click="sticker_selected('sticker', 'recent')"
+                v-if="sticker.stickerType.includes('stikcer')"
+              ></div>
+              <img
+                class="sticker-icon"
+                v-bind:class="
+                  ActiveStickerIcon(
+                    'sticker',
+                    'conan',
+                    sticker.stickerData.group,
+                    sticker.stickerData.key
+                  )
+                "
+                src="@/static/sticker/conan/42.png"
+                @click="sticker_selected('sticker', 'conan')"
+                v-if="sticker.stickerType.includes('stikcer')"
+              />
+              <img
+                class="sticker-icon"
+                v-bind:class="
+                  ActiveStickerIcon(
+                    'sticker',
+                    'hikari',
+                    sticker.stickerData.group,
+                    sticker.stickerData.key
+                  )
+                "
+                src="@/static/sticker/hikari/1.png"
+                @click="sticker_selected('sticker', 'hikari')"
+                v-if="sticker.stickerType.includes('stikcer')"
+              />
+              <img
+                class="sticker-icon"
+                v-bind:class="
+                  ActiveStickerIcon(
+                    'sticker',
+                    'chuka',
+                    sticker.stickerData.group,
+                    sticker.stickerData.key
+                  )
+                "
+                src="@/static/sticker/chuka/2.png"
+                @click="sticker_selected('sticker', 'chuka')"
+                v-if="sticker.stickerType.includes('stikcer')"
+              />
+              <img
+                class="sticker-icon"
+                v-bind:class="
+                  ActiveStickerIcon(
+                    'sticker',
+                    'hunter',
+                    sticker.stickerData.group,
+                    sticker.stickerData.key
+                  )
+                "
+                src="@/static/sticker/hunter/1.png"
+                @click="sticker_selected('sticker', 'hunter')"
+                v-if="sticker.stickerType.includes('stikcer')"
+              />
+              <img
+                class="sticker-icon"
+                v-bind:class="
+                  ActiveStickerIcon(
+                    'sticker',
+                    'other',
+                    sticker.stickerData.group,
+                    sticker.stickerData.key
+                  )
+                "
+                src="@/static/sticker/other/5.png"
+                @click="sticker_selected('sticker', 'other')"
+                v-if="sticker.stickerType.includes('stikcer')"
+              />
+              <img
+                class="face-icon"
+                v-bind:class="
+                  ActiveStickerIcon(
+                    'face',
+                    'other',
+                    sticker.stickerData.group,
+                    sticker.stickerData.key
+                  )
+                "
+                src="@/static/face/other/1.png"
+                @click="sticker_selected('face', 'other')"
+                v-if="sticker.stickerType.includes('face')"
+              />
+              <div
+                class="text-icon"
+                v-bind:class="
+                  ActiveStickerIcon(
+                    'facetext',
+                    'one',
+                    sticker.stickerData.group,
+                    sticker.stickerData.key
+                  )
+                "
+                @click="sticker_selected('facetext', 'one')"
+                v-if="sticker.stickerType.includes('facetext')"
+              >
+                (◔౪◔)
+              </div>
+              <div
+                class="text-icon"
+                v-bind:class="
+                  ActiveStickerIcon(
+                    'facetext',
+                    'two',
+                    sticker.stickerData.group,
+                    sticker.stickerData.key
+                  )
+                "
+                @click="sticker_selected('facetext', 'two')"
+                v-if="sticker.stickerType.includes('facetext')"
+              >
+                (╯‵□′)╯︵┴─┴
+              </div>
+            </div>
+          </template>
+        </Card>
+      </OverlayPanel>
+      <div class="pi pi-microsoft btnSticker" @click="showsticker"></div>
       <InputText
         class=""
         type="text"
@@ -140,11 +504,21 @@
       >
     </div>
   </div>
+  <Toast
+    class="toast_chatroom"
+    position="top-center"
+    group="chatroom_greeting"
+  />
+  <Toast class="toast_main" position="top-center" group="main_greeting" />
 </template>
 <script>
 import InputText from "primevue/inputtext";
 import Button from "primevue/button";
 import Menu from "primevue/menu";
+import Toast from "primevue/toast";
+import OverlayPanel from "primevue/overlaypanel";
+import Card from "primevue/card";
+import Checkbox from "primevue/checkbox";
 import { connectSocket, sendText } from "../utils/api";
 import { uuid } from "../utils/tools.js";
 import axios from "axios";
@@ -166,6 +540,53 @@ export default {
       greeting: false,
       namestyle: "namestyle",
       Size: 1.2,
+      sticker: {
+        stickerType: ["face", "stikcer", "facetext"],
+        stickerData: {
+          group: "",
+          key: "",
+          name: "",
+          index: 0,
+        },
+        stickerRecent: [],
+      },
+      facetext: {
+        one: [
+          "(◔౪◔)",
+          "눈_눈",
+          "( ～'ω')～",
+          "(((ﾟДﾟ;)))",
+          "(･ω´･ )",
+          "(っ・Д・)っ",
+          "Σ(ﾟдﾟ)",
+          "ヽ(`Д´)ノ",
+          "_(:3 」∠ )_",
+          "(`・ω・´)",
+          "ಠ_ಠ",
+          "థ౪థ",
+          "( ﾟДﾟ)σ",
+          "(☉д⊙)",
+          "ლ(╹◡╹ლ)",
+          "(・∀・)つ⑩",
+          "( ^ω^)",
+          "(´･ω･`)",
+          "(*´･д･)?",
+          "(ಠ益ಠ)",
+          "ヽ(✿ﾟ▽ﾟ)ノ",
+        ],
+        two: [
+          "（ﾟДﾟ）σ弌弌弌弌弌弌弌弌弌⊃",
+          "(╯‵□′)╯︵┴─┴",
+          "( ￣ 3￣)y▂ξ",
+          "─=≡Σ((( つ•̀ω•́)つ",
+          "ｷﾀ━━━━(ﾟ∀ﾟ)━━━━!!",
+          "┬┴┬┴┤(・_├┬┴┬┴",
+          "(╬▼дﾟ)▄︻┻┳═一",
+          "（つ> _◕）つ︻╦̵̵͇̿╤───",
+          "༼ つ/̵͇̿̿/’̿’̿   ◕ _◕ ༽つ/̵͇̿̿/’̿’̿ ",
+          "◢▆▅▄▃崩╰(〒皿〒)╯潰▃▄▅▇◣",
+        ],
+      },
       items: [
         {
           label: "僅聊天室",
@@ -194,11 +615,6 @@ export default {
             this.toggle(e);
           },
         },
-        // {
-        //   label: "Vue Website",
-        //   icon: "pi pi-external-link",
-        //   url: "https://vuejs.org/",
-        // },
       ],
     };
   },
@@ -217,6 +633,33 @@ export default {
         el.scrollTop = el.scrollHeight;
       });
     },
+    // stickerTypeGroup: function () {
+    // },
+    loginSize: function () {
+      let data = this.$store.state.ws.loginCollection;
+      let username = data.slice(-1)[0].username;
+      let current_reute = this.$route.name;
+
+      if ("Chatroom" === current_reute) {
+        this.$toast.add({
+          severity: "warn",
+          // summary: "登入",
+          detail: username + " 進入聊天室！",
+          closable: false,
+          group: "chatroom_greeting",
+          life: 4000,
+        });
+      } else {
+        this.$toast.add({
+          severity: "warn",
+          // summary: "登入",
+          detail: username + " 進入聊天室！",
+          closable: false,
+          group: "main_greeting",
+          life: 4000,
+        });
+      }
+    },
   },
   computed: {
     isTexted: function () {
@@ -234,6 +677,9 @@ export default {
     messageSize() {
       return this.$store.state.ws.messageCollection.length;
     },
+    loginSize() {
+      return this.$store.state.ws.loginCollection.length;
+    },
     totalcount() {
       return this.$store.state.ws.totalcount;
     },
@@ -250,6 +696,12 @@ export default {
     },
     fontSize() {
       return this.Size;
+    },
+    stickerTypeGroup() {
+      return this.sticker.stickerType.length;
+    },
+    recentStickerReverse() {
+      return this.sticker.stickerRecent.reverse();
     },
   },
   methods: {
@@ -525,13 +977,121 @@ export default {
           path: "/user/" + item.userKey,
         });
       }
+      if (item.level >= 2) {
+        this.$router.push({
+          path: "/user/" + item.id,
+        });
+      }
+    },
+    showsticker(event) {
+      this.$refs.stickerbody.toggle(event);
+    },
+    sticker_selected(group, name) {
+      this.sticker.stickerData.group = group;
+      this.sticker.stickerData.key = name;
+    },
+    sticker_send(group, name, type, index) {
+      let params = {
+        msgHash: uuid(),
+        userKey: this.$store.state.ws.userKey,
+        userLevel: this.$store.state.ws.rank,
+        username: this.username,
+        userpic: this.$store.state.ws.userpic,
+        msg: "[" + group + "]" + name + "/" + index + "." + type,
+        msgShow: 1,
+      };
+      this.isuserlist = false;
+      this.messageSend.push(params);
+
+      this.sticker.stickerData.name = name;
+      let pushRecent = name + "/" + index + "." + type;
+
+      if (
+        group == "sticker" &&
+        !this.sticker.stickerRecent.includes(pushRecent)
+      ) {
+        this.sticker.stickerRecent.push(pushRecent);
+      }
+      if (this.sticker.stickerRecent.length > 30) {
+        this.sticker.stickerRecent.splice(0, 1);
+      }
+      localStorage.setItem("stickerRecent", this.sticker.stickerRecent);
+      sendText(JSON.stringify(params));
+      this.$refs.stickerbody.toggle();
+    },
+    sticker_recent_send(group, item) {
+      const name = item.split("/")[0];
+      const index = item.split("/")[1].split(".")[0];
+      const type = item.split(".")[1];
+
+      this.sticker_send(group, name, type, index);
+    },
+    isSticker(msg) {
+      if (msg.startsWith("[sticker]")) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    isFace(msg) {
+      if (msg.startsWith("[face]")) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    getStickerToShow(msg) {
+      let url = msg.replace("[sticker]", "");
+      return url;
+    },
+    getFaceToShow(msg) {
+      let url = msg.replace("[face]", "");
+      return url;
+    },
+    ActiveStickerIcon(group, name, groupKey, nameKey) {
+      if (group == groupKey && name == nameKey) {
+        return "sticker-icon-active";
+      } else {
+        return null;
+      }
+    },
+    facetext_append(item) {
+      this.message += item;
+      this.$refs.stickerbody.toggle();
+    },
+    getStickerImg(e) {
+      let url = "epson_87.jpg";
+      let index = e % 6;
+      if (index == 0) {
+        url = "black0.png";
+      }
+      if (index == 1) {
+        url = "black1.png";
+      }
+      if (index == 2) {
+        url = "black2.png";
+      }
+      if (index == 3) {
+        url = "black3.png";
+      }
+      if (index == 4) {
+        url = "black4.png";
+      }
+      if (index == 5) {
+        url = "black5.png";
+      }
+
+      return url;
     },
   },
-
   components: {
     InputText,
     Button,
     Menu,
+    Toast,
+    OverlayPanel,
+    Card,
+    Checkbox,
   },
   setup() {},
   beforeMount() {
@@ -544,6 +1104,13 @@ export default {
     ) {
       this.openWsByToken();
     }
+    if (localStorage.getItem("stickerRecent") != null) {
+      this.sticker.stickerRecent = localStorage
+        .getItem("stickerRecent")
+        .split(",");
+    }
+    // 初始化貼圖選單
+    this.sticker_selected("sticker", "recent");
   },
   mounted() {
     // console.log(this.$store.state.ws.userpic);
@@ -556,11 +1123,19 @@ export default {
   updated() {
     // this.focusInput();
     this.banMsg();
+    this.$nextTick(() => {
+      const el = document.querySelector(".text-content");
+      if (el != null) {
+        el.scrollTop = el.scrollHeight;
+      }
+    });
   },
 };
 </script>
 
 <style>
+@import url("https://fonts.googleapis.com/css?family=Noto+Sans+TC&display=swap");
+
 .box {
   background-color: var(--surface-e);
   text-align: center;
@@ -587,6 +1162,7 @@ export default {
   overflow-y: auto;
   background-color: rgb(253, 253, 253);
   max-height: calc(100vh - 195px);
+  -webkit-overflow-scrolling: touch;
 }
 .text-body {
   /* z-index: 1; */
@@ -602,7 +1178,7 @@ export default {
 }
 .input-body {
   display: grid;
-  grid-template-columns: 2.2rem 2.2rem 1fr 4.2rem;
+  grid-template-columns: 2.2rem 1fr 4.2rem;
   /* left: 0;
   bottom: 20px;
   width: 100%; */
@@ -612,25 +1188,14 @@ export default {
 .btnSticker {
   font-size: 1.7rem !important;
   align-self: center;
-  color: bisque;
-  filter: drop-shadow(0px 0px 10px rgba(0, 0, 0, 0.5));
-}
-.btnFace {
-  font-size: 1.7rem !important;
   padding-right: 0.4rem;
-  align-self: center;
   color: bisque;
   filter: drop-shadow(0px 0px 10px rgba(0, 0, 0, 0.5));
 }
-.btnSticker:hover,
-.btnFace:hover {
+.btnSticker:hover {
   color: orange;
 }
-.outer-container {
-  max-height: 100%;
-  left: 0;
-  overflow: hidden;
-}
+
 .text-head {
   /* position: absolute; */
   /* height: 100%; */
@@ -660,8 +1225,10 @@ export default {
 }
 .list-item {
   margin: 0;
-  padding: 0.4rem;
+  padding: 0.2rem;
   text-align: left;
+  display: grid;
+  grid-template-columns: 1.8rem 1fr;
 }
 .banBtn {
   text-align-last: right;
@@ -795,6 +1362,7 @@ export default {
 }
 .text-group {
   /* margin-left: 1.7rem; */
+  display: flex;
   word-break: break-word;
 }
 .zoomsize-group {
@@ -803,8 +1371,17 @@ export default {
   background-color: cornsilk;
 }
 .namearea-group {
-  display: initial;
+  /* display: initial; */
   /* vertical-align: text-top; */
+  white-space: nowrap;
+}
+.namearea-group-list {
+  display: initial;
+  font-size: 1.2rem;
+  align-self: center;
+}
+.namearea-group-list .pi {
+  font-size: 1.2rem !important;
 }
 .chatroom_userimg {
   width: 1.8rem !important;
@@ -813,5 +1390,185 @@ export default {
 }
 .chatroom_usermsg {
   /* display: inline-flex; */
+  /* font-weight: bold; */
+  font-family: "Noto Sans TC", sans-serif;
+}
+.p-toast .p-toast-message .p-toast-message-content .p-toast-message-icon {
+  display: none;
+}
+.toast_chatroom {
+  top: 118px !important;
+  width: 100% !important;
+  left: 0% !important;
+  margin-left: 0rem !important;
+}
+.toast_main {
+  top: 118px !important;
+  width: 20% !important;
+  left: 80% !important;
+  margin-left: 0rem !important;
+}
+.p-overlaypanel .p-overlaypanel-content {
+  padding: 0rem !important;
+}
+.sticker-container {
+  width: 22.5rem;
+}
+.sticker-container > .p-card-body {
+  padding: 0rem !important;
+}
+.sticker-container > .p-card-body .p-card-content {
+  padding: 0rem !important;
+}
+.sticker-container .p-card-footer {
+  padding-top: 0rem !important;
+}
+
+.sticker-container .p-checkbox .p-checkbox-box.p-highlight {
+  border-color: navy;
+  background: navy;
+}
+.sticker-container
+  .p-checkbox:not(.p-checkbox-disabled)
+  .p-checkbox-box.p-highlight:hover {
+  border-color: navy;
+  background: navy;
+}
+
+.sticker-container .p-checkbox:not(.p-checkbox-disabled) .p-checkbox-box:hover {
+  border-color: navy;
+  /* background:aquamarine; */
+}
+
+.sticker-switcher {
+  display: flex;
+  overflow-x: auto;
+  white-space: nowrap;
+  padding: 0.5rem;
+  height: 51px;
+}
+.sticker-header {
+  display: flex;
+  margin: 0.5rem;
+}
+.sticker-header .p-field-checkbox {
+  color: mediumblue;
+  /* margin-bottom: 0 !important; */
+  margin-right: 0.8rem;
+  font-weight: bold;
+}
+.sticker-area {
+  height: 240px;
+  display: flex;
+  flex-flow: wrap;
+  /* justify-content: space-around; */
+  justify-content: start;
+  align-content: flex-start;
+  padding-left: 3px;
+  overflow-y: auto;
+}
+.sticker-item {
+  height: 68px;
+  width: 68px;
+  object-fit: cover;
+}
+.sticker-item-show {
+  max-height: 100px;
+  max-width: 200px;
+  object-fit: cover;
+}
+.face-item {
+  max-height: 40px;
+  max-width: 40px;
+  object-fit: contain;
+}
+.face-item-show {
+  max-height: 1.5rem;
+  /* max-width: 40px; */
+  object-fit: contain;
+}
+.sticker-icon {
+  height: 35px;
+  width: 35px;
+  object-fit: cover;
+  border-radius: 5px;
+  opacity: 0.6;
+}
+.facetext-item {
+  width: 113px;
+  /* object-fit: cover ; */
+  /* overflow: hidden ; */
+  white-space: nowrap;
+  /* padding: 0  !important;
+  padding-top: 5px !important;
+  padding-bottom: 5px !important; */
+}
+.facetext-item-long {
+  width: 340px;
+  white-space: nowrap;
+}
+.facetext-item .p-button-label,
+.facetext-item-long .p-button-label {
+  font-family: "Noto Sans TC", sans-serif;
+  color: indigo;
+}
+.text-icon {
+  align-self: center;
+  width: 35px;
+  overflow: hidden;
+  font-size: 0.8rem;
+  opacity: 0.4;
+}
+.face-icon {
+  height: 35px;
+  width: 35px;
+  object-fit: cover;
+  border-radius: 25px;
+  background-color: black;
+  opacity: 0.6;
+}
+.sticker-recent-icon {
+  width: 35px !important;
+  font-size: 1.8rem !important;
+  align-self: center;
+  opacity: 0.4;
+}
+.sticker-recent-icon:hover,
+.face-icon:hover,
+.text-icon:hover,
+.sticker-icon:hover {
+  opacity: 1;
+  cursor: pointer;
+}
+.sticker-recent-icon-active,
+.face-icon-active,
+.text-icon-active,
+.sticker-icon-active {
+  opacity: 1;
+}
+@media (max-aspect-ratio: 3/2) {
+  .toast_main {
+    width: 30% !important;
+    left: 70% !important;
+  }
+  .toast_chatroom {
+    top: 118px !important;
+    width: 100% !important;
+    left: 0% !important;
+    margin-left: 0rem !important;
+  }
+}
+@media screen and (max-width: 900px) {
+  .toast_main {
+    top: 320px !important;
+    width: 100% !important;
+    left: 0% !important;
+  }
+  .toast_chatroom {
+    top: 118px !important;
+    width: 100% !important;
+    left: 0% !important;
+    margin-left: 0rem !important;
+  }
 }
 </style>
