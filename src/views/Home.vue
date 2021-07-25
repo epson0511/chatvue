@@ -34,7 +34,7 @@
         </Panel>
         <br />
         <Panel header="已知問題">
-          <p>1. 寄發驗證信問題</p>
+          <!-- <p>1. 寄發驗證信問題</p> -->
           <a
             target="_blank"
             href="https://docs.google.com/forms/d/1jHpJMbouZ_thJBV0gPoHE3Xq9YmFNqMtKTh6QwcQy70"
@@ -44,6 +44,17 @@
         </Panel>
         <br />
         <Panel header="開發日誌">
+          <div>● 2021.07.21 (alpha-3.1)</div>
+          <p style="margin-left: 7%">
+            1. 現在可驗證信箱<br />
+            2. 顯示最後登入時間<br />
+            3. 掛在聊天室將會累積點數<br />
+          </p>
+          <div>● 2021.07.19 (alpha-2.9)</div>
+          <p style="margin-left: 7%">
+            1. 優化主視窗拖拉比例<br />
+            2. 可更改使用者暱稱<br />
+          </p>
           <div>● 2021.05.31 (alpha-2.8)</div>
           <p style="margin-left: 7%">
             1. 貼圖功能<br />
@@ -60,11 +71,6 @@
             1. 個人圖片上傳功能(1.5MB)<br />
             2. 聊天室使用者名稱可以點進個人頁面<br />
             3. 密碼上限改為20字元<br />
-          </p>
-          <div>● 2021.05.21 (alpha-2.5)</div>
-          <p style="margin-left: 7%">
-            1. 調整聊天室功能列表<br />
-            2. 修正打一堆"..."造成跑版的問題<br />
           </p>
           <div>● 2021.05.13</div>
           <p style="margin-left: 7%">
@@ -119,7 +125,8 @@ export default {
 .home-body {
   z-index: 1;
   max-height: calc(94vh - 190px);
-  overflow: overlay;
+  /* overflow: overlay; */
+  overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
 }
 .text-area {

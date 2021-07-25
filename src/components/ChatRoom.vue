@@ -19,7 +19,7 @@
       label="功能表"
       @click="toggle"
     />
-    <Menu ref="menu" :model="items" :popup="true" />
+    <Menu ref="menu" :model="items" :popup="true" appendTo="body" />
   </div>
 
   <div class="text-body">
@@ -286,7 +286,14 @@
               "
             >
               <Button
-                class="p-button p-component p-button-raised p-button-help p-button-text facetext-item"
+                class="
+                  p-button
+                  p-component
+                  p-button-raised
+                  p-button-help
+                  p-button-text
+                  facetext-item
+                "
                 v-for="item in facetext.one"
                 :key="item"
                 v-bind:label="item"
@@ -301,7 +308,14 @@
               "
             >
               <Button
-                class="p-button p-component p-button-raised p-button-help p-button-text facetext-item-long"
+                class="
+                  p-button
+                  p-component
+                  p-button-raised
+                  p-button-help
+                  p-button-text
+                  facetext-item-long
+                "
                 v-for="item in facetext.two"
                 :key="item"
                 v-bind:label="item"
@@ -1083,6 +1097,16 @@ export default {
 
       return url;
     },
+    iamAlive(id) {
+        if (id.toString().length == 6) {
+        let params = {
+          userid: id,
+          serverjob: 'count_point',
+          msgShow: 0,
+        };
+        sendText(JSON.stringify(params));
+      }
+    },
   },
   components: {
     InputText,
@@ -1119,6 +1143,14 @@ export default {
       const el = document.querySelector(".text-content");
       el.scrollTop = el.scrollHeight;
     });
+    setInterval(() => {
+      if (
+        this.$store.state.ws.rank > 1 &&
+        this.$store.state.statecenter.wsStatus != 0
+      ) {
+        this.iamAlive(this.$store.state.ws.userKey);
+      }
+    }, 60000);
   },
   updated() {
     // this.focusInput();
@@ -1159,7 +1191,7 @@ export default {
   top: 120px;
   bottom: 76px;
   width: 100%;
-  overflow-y: auto;
+  overflow-y: scroll;
   background-color: rgb(253, 253, 253);
   max-height: calc(100vh - 195px);
   -webkit-overflow-scrolling: touch;
@@ -1204,6 +1236,7 @@ export default {
   display: grid;
   grid-template-columns: 6rem 8.5rem 1fr;
 }
+
 .text-head .p-button-text {
   padding: 0rem 0.3rem;
   background-color: whitesmoke !important;
@@ -1212,6 +1245,7 @@ export default {
 .text-head .p-button-text .p-button-label {
   flex: 0 0 auto;
 }
+
 .chatroom-function {
   justify-self: right;
   padding-right: 1rem !important;
@@ -1404,8 +1438,8 @@ export default {
 }
 .toast_main {
   top: 118px !important;
-  width: 20% !important;
-  left: 80% !important;
+  width: 35% !important;
+  left: 65% !important;
   margin-left: 0rem !important;
 }
 .p-overlaypanel .p-overlaypanel-content {
@@ -1546,7 +1580,7 @@ export default {
 .sticker-icon-active {
   opacity: 1;
 }
-@media (max-aspect-ratio: 3/2) {
+@media (max-aspect-ratio: 3/2) and (max-height: 930px) {
   .toast_main {
     width: 30% !important;
     left: 70% !important;
@@ -1558,7 +1592,20 @@ export default {
     margin-left: 0rem !important;
   }
 }
-@media screen and (max-width: 900px) {
+@media screen and (min-width: 1600px) {
+  .toast_main {
+    top: 118px !important;
+    width: 20% !important;
+    left: 80% !important;
+  }
+  .toast_chatroom {
+    top: 118px !important;
+    width: 100% !important;
+    left: 0% !important;
+    margin-left: 0rem !important;
+  }
+}
+@media screen and (max-width: 1000px) {
   .toast_main {
     top: 320px !important;
     width: 100% !important;

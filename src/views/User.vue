@@ -25,18 +25,44 @@
           <span class="level">{{ level }}</span> {{ name }}
         </template>
         <template #subtitle> 目前稱號：87 </template>
+
         <template #content>
+          <div class="usercontrol">
+            <Button
+              class="p-button p-component p-button-raised p-button-success"
+              icon="pi pi-user-edit"
+              label="更改暱稱"
+              @click="openRename"
+            />
+            <Button
+              class="p-button p-component p-button-raised p-button-success"
+              icon="pi pi-tag"
+              label="更改稱號"
+              @click="openNicklist"
+              disabled="true"
+            />
+          </div>
           <p class="userinfobox">
             <span class="column-name">信箱</span
             ><span class="column">{{ email }}</span>
           </p>
           <p class="userinfobox">
             <span class="column-name">點數</span
-            ><span class="column">{{ point }}</span>
+            ><span class="column">{{ Math.ceil(point/10) }}</span>
           </p>
           <p class="userinfobox">
             <span class="column-name">註冊狀態</span
-            ><span class="column">{{ status }}</span>
+            ><span class="column"
+              >{{ status }}
+              <input
+                v-if="status !== '已驗證'"
+                id="emailverify"
+                class="emailverify"
+                type="button"
+                :value="'驗證' + emailverifycountshow"
+                :disabled="emailverify"
+                @click="verify"
+            /></span>
           </p>
           <p class="userinfobox">
             <span class="column-name">註冊日期</span
@@ -84,7 +110,7 @@
           </p>
           <p class="userinfobox">
             <span class="column-name">點數</span
-            ><span class="column">{{ point }}</span>
+            ><span class="column">{{ Math.ceil(point/10) }}</span>
           </p>
           <p class="userinfobox">
             <span class="column-name">註冊狀態</span
@@ -113,7 +139,7 @@
     </div>
   </div>
 
-  <Dialog v-model:visible="uploadModal">
+  <Dialog v-model:visible="uploadModal" :modal="true">
     <template v-if="uploading == false" #header>
       <h3>選取圖片</h3>
     </template>
@@ -142,16 +168,40 @@
     </FileUpload>
     <ProgressSpinner v-else />
   </Dialog>
+  <Dialog v-model:visible="renameModel" :modal="true" :dismissableMask="true">
+    <template #header>
+      <h3>輸入新暱稱</h3>
+    </template>
+
+    <div class="p-field">
+      <InputText
+        id="newName"
+        v-model.trim="newName"
+        type="username"
+        aria-describedby="username1-help"
+        autofocus
+        @focus="this.err.newName = ''"
+      />
+      <small id="newName-help" class="p-error">{{ err.newName }}</small>
+    </div>
+
+    <template #footer>
+      <Button label="送出" @click="reName" />
+    </template>
+  </Dialog>
+  <Toast position="top-center" group="userpage" />
 </template>
 <script>
 import QuickLink from "@/components/QuickLink.vue";
 import Card from "primevue/card";
 import Button from "primevue/button";
 import Dialog from "primevue/dialog";
+import InputText from "primevue/inputtext";
 import ProgressSpinner from "primevue/progressspinner";
 import FileUpload from "primevue/fileupload";
 import axios from "axios";
 import { endpoint } from "../utils/endpoint.js";
+import Toast from "primevue/toast";
 
 export default {
   data() {
@@ -171,6 +221,14 @@ export default {
       uploadModal: false,
       ownerpage: false,
       pageLoad: false,
+      renameModel: false,
+      emailverify: false,
+      emailverifycount: 0,
+      emailverifycountshow: "",
+      newName: "",
+      err: {
+        newName: "",
+      },
     };
   },
   watch: {
@@ -179,6 +237,19 @@ export default {
         this.ownerpage = true;
         this.forceRerender();
       }
+    },
+    emailverifycount: {
+      handler(value) {
+        if (value > 0) {
+          setTimeout(() => {
+            this.emailverifycount--;
+            this.emailverifycountshow = "(" + this.emailverifycount + ")";
+          }, 1000);
+        } else {
+          this.emailverifycountshow = "";
+          this.emailverify = false;
+        }
+      },
     },
   },
   computed: {
@@ -236,6 +307,7 @@ export default {
       }
       this.createdate = new Date(data.createdate).toLocaleDateString();
       this.lastdate = new Date(data.lastdate).toLocaleString();
+
       if (data.level === 9) {
         this.level = "站長";
       } else if (data.level === 8) {
@@ -255,6 +327,13 @@ export default {
     },
     openUpload() {
       this.uploadModal = true;
+    },
+    openRename() {
+      this.err.newName = "";
+      this.renameModel = true;
+    },
+    closeRename() {
+      this.renameModel = false;
     },
     getDefaultImg(e) {
       let url = "epson_87.jpg";
@@ -314,6 +393,67 @@ export default {
           }
         });
     },
+    reName() {
+      if (this.newName === "") {
+        this.err.newName = "請輸入新名稱";
+        return;
+      }
+      let params = {
+        name: this.newName,
+      };
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + this.$store.state.statecenter.token,
+        "Access-Control-Allow-Origin": "*",
+      };
+      axios
+        .post(
+          endpoint + "chat/rest/v1/userAPI/modUser",
+          JSON.stringify(params),
+          {
+            headers: headers,
+          }
+        )
+        .then((res) => {
+          console.log(res);
+          if (res.status == "200") {
+            this.$store.commit("ws/setUsername", res.data.name);
+            this.name = res.data.name;
+            this.closeRename();
+            this.forceRerender();
+          }
+        });
+    },
+    verify() {
+      this.emailverify = true;
+      this.emailverifycount = 60;
+      let params = {
+        email: this.email,
+      };
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + this.$store.state.statecenter.token,
+        "Access-Control-Allow-Origin": "*",
+      };
+      axios
+        .post(
+          endpoint + "chat/rest/v1/userAPI/sendConfirmMail",
+          JSON.stringify(params),
+          {
+            headers: headers,
+          }
+        )
+        .then((res) => {
+          console.log(res);
+          if (res.status == "200") {
+            this.$swal({
+              title: "驗證信已寄出！",
+              text: "請至註冊本站的信箱收件驗證",
+              confirmButtonText: '<i class="fa fa-thumbs-up"></i> 確認',
+            });
+          }
+        });
+    },
     forceRerender() {
       this.componentKey += 1;
     },
@@ -326,6 +466,8 @@ export default {
     Dialog,
     FileUpload,
     ProgressSpinner,
+    InputText,
+    Toast,
   },
   mounted() {
     this.userinfo(this.$route.params.userId);
@@ -409,5 +551,21 @@ export default {
 }
 .p-fileupload-row > div:nth-child(3) {
   display: none;
+}
+.usercontrol .p-button {
+  margin: 5px;
+}
+.emailverify {
+  background-color: forestgreen;
+  color: white;
+}
+.emailverify:disabled {
+  background-color: forestgreen;
+  opacity: 0.5;
+  color: white;
+}
+.p-field * {
+  display: block;
+  text-align-last: start;
 }
 </style>

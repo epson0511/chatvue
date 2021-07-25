@@ -1,9 +1,9 @@
-import { createRouter, createWebHashHistory} from "vue-router";
+import { createRouter, createWebHashHistory } from "vue-router";
 import Chatroom from "../views/Chatroom.vue";
 import MainPage from "../views/MainPage.vue";
+import VerifyMail from "../views/VerifyMail.vue";
 import Home from "../views/Home.vue";
 import User from "../views/User.vue";
-
 
 const routes = [
   {
@@ -46,6 +46,15 @@ const routes = [
     meta: {
       title: "米花愛普森直播 - 直播間",
     },
+  },
+  {
+    path: "/verifymail/:email?",
+    name: "verifymail",
+    component: VerifyMail,
+    meta: {
+      title: "米花愛普森直播 - 驗證信箱",
+    },
+    
   },
 ];
 

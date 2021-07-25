@@ -182,7 +182,7 @@
     <div class="p-grid">
       <div class="p-field p-col-12">
         <label class="input-hander"
-          >[請注意目前還不會寄信而且也沒啥好驗證的](您已註冊成功，可立即登入使用，系統已寄送一封驗證信至您的信箱，請驗證信箱以便啟用完整功能。)</label
+          >您已註冊成功，可立即登入使用，系統已寄送一封驗證信至您的信箱，請驗證信箱以便啟用完整功能。</label
         >
       </div>
     </div>
@@ -576,8 +576,11 @@ export default {
 .input-hander {
   float: left;
 }
-.usermenu,
-.userbtn {
+.userbtn{
+  font-weight: 600 !important;
+  font-size: 1.3rem !important;
+}
+.usermenu {
   // width: 9rem !important;
   // position: relative;
   // display: inline-block !important;

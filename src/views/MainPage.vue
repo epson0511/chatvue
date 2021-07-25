@@ -257,14 +257,41 @@ export default {
 <style>
 .main {
   display: grid;
-  grid-template-columns: 80% 20%;
+  grid-template-columns: 65% 35%;
+  overflow: hidden;
 }
-@media (max-aspect-ratio: 3/2) {
+.channel-switcher {
+  display: grid;
+  display: none;
+  position: fixed;
+  overflow: hidden;
+  right: 35%;
+}
+@media (max-aspect-ratio: 3/2) and (max-height: 930px) {
   .main {
     grid-template-columns: 70% 30%;
   }
+  .channel-switcher {
+    display: grid;
+    display: none;
+    position: fixed;
+    overflow: hidden;
+    right: 30%;
+  }
 }
-@media screen and (max-width: 900px) {
+@media (min-width: 1600px) {
+  .main {
+    grid-template-columns: 80% 20%;
+  }
+  .channel-switcher {
+    display: grid;
+    display: none;
+    position: fixed;
+    overflow: hidden;
+    right: 20%;
+  }
+}
+@media screen and (max-width: 1000px) {
   .main {
     grid-template-columns: none;
     grid-template-rows: 200px 1fr;
@@ -276,22 +303,16 @@ export default {
     /* z-index: 1; */
     max-height: calc(100vh - 375px);
   }
-  .main .text-content{
+  .main .text-content {
     height: calc(100vh - 376px);
     overflow-y: scroll;
-    -webkit-overflow-scrolling: touch
+    -webkit-overflow-scrolling: touch;
   }
 }
 .text-head {
   grid-template-columns: 6rem 8.5rem 1fr;
 }
-.channel-switcher {
-  display: grid;
-  display: none;
-  position: fixed;
-  overflow: hidden;
-  right: 20%;
-}
+
 .media-body {
   z-index: 2;
 }
